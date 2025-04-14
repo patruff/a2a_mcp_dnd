@@ -22,7 +22,7 @@ const AgentMakerPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [selectedProvider, setSelectedProvider] = React.useState<string>('Google');
   const [selectedModel, setSelectedModel] = React.useState<string>('gemini-2-flash');
-  const [skillDescription, setSkillDescription] = React.useState('');
+  const [selectedSkill, setSelectedSkill] = React.useState<string>('code_assistance');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -81,7 +81,6 @@ const AgentMakerPage: React.FC = () => {
       defaultOutputModes: ['text'],
       provider: {
         name: selectedProvider,
-        organization: 'A2A Samples',
         preferred_model: selectedModel, // Model goes inside the provider object
       },
       version: '0.3.0',
@@ -92,18 +91,7 @@ const AgentMakerPage: React.FC = () => {
       },
       authentication: null,
       skills: [
-        {
-          id: 'code_assistance',
-          name: 'Code Assistance',
-          description: skillDescription,
-          tags: ['coding', 'development', 'file-management'],
-        },
-        {
-          id: 'task_management',
-          name: 'Task Management',
-          description: 'Helps manage tasks and projects',
-          tags: ['productivity', 'organization'],
-        },
+        getSkillDetails(selectedSkill),
       ],
       metadata: {
         icon: agentIcon,
@@ -252,6 +240,49 @@ const AgentMakerPage: React.FC = () => {
     '💀', // Skull
   ];
 
+  const skillOptions = [
+    {
+      id: 'code_assistance',
+      name: 'Code Assistance',
+      description: 'Helps manage code and provides coding assistance.',
+      tags: ['coding', 'development', 'file-management'],
+    },
+    {
+      id: 'healing',
+      name: 'Healing',
+      description: 'Provides medical assistance and support.',
+      tags: ['medical', 'support'],
+    },
+    {
+      id: 'magic',
+      name: 'Magic',
+      description: 'Utilizes magical powers for various tasks.',
+      tags: ['magic', 'powers'],
+    },
+    {
+      id: 'combat',
+      name: 'Combat',
+      description: 'Engages in combat and strategic battles.',
+      tags: ['combat', 'strategy'],
+    },
+    {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Executes covert operations and remains unseen.',
+      tags: ['covert', 'operations'],
+    },
+  ];
+
+  const getSkillDetails = (skillId: string) => {
+    const skill = skillOptions.find((s) => s.id === skillId);
+    return skill || {
+      id: 'default',
+      name: 'Default Skill',
+      description: 'A default skill with no specific capabilities.',
+      tags: ['default'],
+    };
+  };
+
   return (
     <div className="container mx-auto py-10">
       <Card>
@@ -331,15 +362,23 @@ const AgentMakerPage: React.FC = () => {
               placeholder="Describe the agent"
             />
           </div>
+
           <div>
-            <Label htmlFor="skill-description">Skill Description</Label>
-            <Textarea
-              id="skill-description"
-              value={skillDescription}
-              onChange={(e) => setSkillDescription(e.target.value)}
-              placeholder="Describe agent skills"
-            />
+            <Label htmlFor="skill">Skill</Label>
+            <Select onValueChange={(value) => setSelectedSkill(value)}>
+              <SelectTrigger id="skill">
+                <SelectValue placeholder="Select agent skill"/>
+              </SelectTrigger>
+              <SelectContent>
+                {skillOptions.map((skill) => (
+                  <SelectItem key={skill.id} value={skill.id}>
+                    {skill.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
           <div>
             <Label>Select MCPs</Label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
