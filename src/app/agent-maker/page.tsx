@@ -18,6 +18,8 @@ const AgentMakerPage: React.FC = () => {
   const [selectedMcps, setSelectedMcps] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [generatedAgent, setGeneratedAgent] = React.useState<CreateAgentOutput | null>(null);
+  const [provider, setProvider] = React.useState('');
+  const [model, setModel] = React.useState('');
 
   const {toast} = useToast();
 
@@ -58,6 +60,26 @@ const AgentMakerPage: React.FC = () => {
       setIsGenerating(false);
     }
   };
+
+  const handleProviderChange = (value: string) => {
+    setProvider(value);
+    setModel(''); // Reset model when provider changes
+  };
+
+  const getModelsForProvider = (provider: string) => {
+    switch (provider) {
+      case 'google':
+        return ['gemini-2.0-flash', 'gemini-2.0-pro'];
+      case 'cerebras':
+        return ['cerebras-model-1', 'cerebras-model-2'];
+      case 'groq':
+        return ['groq-model-1', 'groq-model-2'];
+      default:
+        return [];
+    }
+  };
+
+  const models = getModelsForProvider(provider);
 
   return (
     <div className="container mx-auto py-10">
@@ -112,6 +134,37 @@ const AgentMakerPage: React.FC = () => {
               ))}
             </div>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="provider">Provider</Label>
+              <Select onValueChange={handleProviderChange}>
+                <SelectTrigger id="provider">
+                  <SelectValue placeholder="Select provider"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="google">Google</SelectItem>
+                  <SelectItem value="cerebras">Cerebras</SelectItem>
+                  <SelectItem value="groq">Groq</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="model">Model</Label>
+              <Select onValueChange={(value) => setModel(value)} disabled={!provider}>
+                <SelectTrigger id="model">
+                  <SelectValue placeholder="Select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {models.map((model) => (
+                    <SelectItem key={model} value={model}>{model}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <Button onClick={handleSubmit} disabled={isGenerating}>
             {isGenerating ? 'Generating...' : 'Generate Agent'}
           </Button>
@@ -149,5 +202,3 @@ const AgentMakerPage: React.FC = () => {
 };
 
 export default AgentMakerPage;
-
-    
