@@ -11,6 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
@@ -462,9 +463,8 @@ const MCPManagementPage: React.FC = () => {
               <AccordionItem key={index} value={mcp.name}>
                 <AccordionTrigger>
                   <div className="flex w-full items-center justify-between">
-                    <span>{mcp.name}</span>
+                    <span>{mcp.name.split('/')[1]}</span>
                     <span>{mcp.description}</span>
-                    <span>Status: {mcp.status}</span>
                     <PlusCircle className="h-4 w-4 shrink-0 transition-transform duration-200 [&[data-state=open]>svg]:rotate-180"/>
                   </div>
                 </AccordionTrigger>
