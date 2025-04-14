@@ -11,11 +11,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
+import {PlusCircle} from 'lucide-react';
 
 const MCPManagementPage: React.FC = () => {
   const [mcps, setMcps] = useState([
@@ -461,34 +461,37 @@ const MCPManagementPage: React.FC = () => {
             {mcps.map((mcp, index) => (
               <AccordionItem key={index} value={mcp.name}>
                 <AccordionTrigger>
-                  <div className="flex w-full justify-between">
+                  <div className="flex w-full items-center justify-between">
                     <span>{mcp.name}</span>
                     <span>{mcp.description}</span>
                     <span>Status: {mcp.status}</span>
+                    <PlusCircle className="h-4 w-4 shrink-0 transition-transform duration-200 [&[data-state=open]>svg]:rotate-180"/>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="pl-4">
-                    <p>Description: {mcp.details.description}</p>
-                    <p>Available Tools:</p>
-                    <ul>
+                    <p className="mb-2">Description: {mcp.details.description}</p>
+                    <p className="mb-2 font-semibold">Available Tools:</p>
+                    <ul className="mb-4 list-disc pl-5">
                       {mcp.details.tools.map((tool, toolIndex) => (
-                        <li key={toolIndex}>
-                          {tool.name}: {tool.description}
-                          <ul>
+                        <li key={toolIndex} className="mb-3">
+                          <span className="font-medium">{tool.name}:</span> {tool.description}
+                          <ul className="list-disc pl-5 mt-1">
                             {tool.parameters && tool.parameters.map((param, paramIndex) => (
                               <li key={paramIndex}>
-                                {param.name}: {param.type} ({param.required ? 'required' : 'optional'})
+                                <span className="font-semibold">{param.name}:</span> {param.type} ({param.required ? 'required' : 'optional'})
                               </li>
                             ))}
                           </ul>
                         </li>
                       ))}
                     </ul>
-                    <p>Command: {mcp.details.command}</p>
-                    <Button variant="outline">Configure</Button>
-                    <Button variant="outline">Enable/Disable</Button>
-                    <Button variant="outline">Remove</Button>
+                    <p className="mb-2">Command: {mcp.details.command}</p>
+                    <div className="flex gap-2">
+                      <Button variant="outline">Configure</Button>
+                      <Button variant="outline">Enable/Disable</Button>
+                      <Button variant="outline">Remove</Button>
+                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
