@@ -42,6 +42,7 @@ const AgentMakerPage: React.FC = () => {
         additionalAttributes: {},
       };
 
+      // Await the createAgent call to get the generated agent data
       const agent = await createAgent(agentInput);
 
       toast({
