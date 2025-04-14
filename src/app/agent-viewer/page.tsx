@@ -20,6 +20,7 @@ const AgentViewerPage: React.FC = () => {
 
   const [provider, setProvider] = useState('Google');
   const [icon, setIcon] = useState('🧙‍♂️'); // Default icon
+    const [model, setModel] = useState('gemini-2-flash');
 
   useEffect(() => {
     if (agentCardJsonParam) {
@@ -27,6 +28,12 @@ const AgentViewerPage: React.FC = () => {
         const decodedJson = decodeURIComponent(agentCardJsonParam);
         setAgentCardJson(decodedJson);
         formatAndDisplay(decodedJson);
+
+          // Parse the JSON to extract provider and icon values
+          const parsedJson = JSON.parse(decodedJson);
+          setProvider(parsedJson.provider.name || 'Google');
+          setIcon(parsedJson.icon || '🧙‍♂️');
+            setModel(parsedJson.provider.preferred_model || 'gemini-2-flash');
       } catch (error: any) {
         console.error('Error decoding or parsing agentCardJson:', error);
         setValidationResult(`Error: ${error.message}`);
@@ -106,6 +113,25 @@ const AgentViewerPage: React.FC = () => {
     }
   };
 
+    const handleProviderChange = (newProvider: string) => {
+        setProvider(newProvider);
+        // Update the model based on the new provider
+        switch (newProvider) {
+            case 'Google':
+                setModel('gemini-2-flash');
+                break;
+            case 'Cerebras':
+                setModel('llama-4-scout-17b-16e-instruct');
+                break;
+            case 'Groq':
+                setModel('qwen-qwq-32b');
+                break;
+            default:
+                setModel('');
+                break;
+        }
+    };
+
   return (
     <div className="container mx-auto py-10">
       <Card>
@@ -118,7 +144,7 @@ const AgentViewerPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Provider</Label>
-              <Select onValueChange={setProvider} value={provider}>
+              <Select onValueChange={handleProviderChange} value={provider}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select provider"/>
                 </SelectTrigger>
@@ -129,6 +155,25 @@ const AgentViewerPage: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
+              <div>
+                  <Label>Model</Label>
+                  <Select onValueChange={setModel} value={model}>
+                      <SelectTrigger>
+                          <SelectValue placeholder="Select model"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                          {provider === 'Google' && (
+                              <SelectItem value="gemini-2-flash">gemini-2-flash</SelectItem>
+                          )}
+                          {provider === 'Cerebras' && (
+                              <SelectItem value="llama-4-scout-17b-16e-instruct">llama-4-scout-17b-16e-instruct</SelectItem>
+                          )}
+                          {provider === 'Groq' && (
+                              <SelectItem value="qwen-qwq-32b">qwen-qwq-32b</SelectItem>
+                          )}
+                      </SelectContent>
+                  </Select>
+              </div>
             <div>
               <Label>Icon</Label>
               <Select onValueChange={setIcon} value={icon}>
