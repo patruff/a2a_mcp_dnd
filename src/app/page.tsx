@@ -1,10 +1,9 @@
-
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
 import {Home} from 'lucide-react';
 
-export default function HomePage() {
+export default function LandingPage() {
   return (
     <div className="container mx-auto py-10">
       <Card>
