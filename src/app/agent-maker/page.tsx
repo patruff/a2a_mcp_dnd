@@ -20,6 +20,7 @@ const AgentMakerPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [selectedProvider, setSelectedProvider] = React.useState<string>('');
   const [selectedModel, setSelectedModel] = React.useState<string>('');
+  const [agentCardJson, setAgentCardJson] = React.useState<string>('');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -47,13 +48,12 @@ const AgentMakerPage: React.FC = () => {
       // Await the createAgent call to get the generated agent data
       const agent = await createAgent(agentInput);
 
+      setAgentCardJson(agent.agentCardJson);
+
       toast({
         title: 'Agent Generated!',
         description: 'Your agent has been successfully generated.',
       });
-
-      // Redirect to the AgentViewerPage with the agentCardJson as a query parameter
-      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agent.agentCardJson)}`);
     } catch (error: any) {
       console.error('Error generating agent:', error);
       toast({
@@ -70,6 +70,18 @@ const AgentMakerPage: React.FC = () => {
     Google: ['gemini-2-flash'],
     Cerebras: ['llama-4-scout-17b-16e-instruct'],
     Groq: ['qwen-qwq-32b'],
+  };
+
+  const handleViewAgentCard = () => {
+    if (agentCardJson) {
+      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJson)}`);
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Please generate the agent first.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -157,9 +169,14 @@ const AgentMakerPage: React.FC = () => {
             </div>
           </div>
 
-          <Button onClick={handleSubmit} disabled={isGenerating}>
-            {isGenerating ? 'Generating...' : 'Generate Agent'}
-          </Button>
+          <div className="flex justify-end space-x-2">
+            <Button onClick={handleSubmit} disabled={isGenerating || !!agentCardJson}>
+              {isGenerating ? 'Generating...' : 'Generate Agent'}
+            </Button>
+            <Button variant="outline" onClick={handleViewAgentCard} disabled={isGenerating || !agentCardJson}>
+              View AgentCard
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
