@@ -18,8 +18,6 @@ const AgentMakerPage: React.FC = () => {
   const [agentDescription, setAgentDescription] = React.useState('');
   const [selectedMcps, setSelectedMcps] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState(false);
-  const [provider, setProvider] = React.useState('');
-  const [model, setModel] = React.useState('');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -51,7 +49,7 @@ const AgentMakerPage: React.FC = () => {
       });
 
       // Redirect to the AgentViewerPage with the agentCardJson as a query parameter
-      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(JSON.stringify(agent.agentCardJson))}`);
+      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agent.agentCardJson)}`);
     } catch (error: any) {
       console.error('Error generating agent:', error);
       toast({
@@ -63,26 +61,6 @@ const AgentMakerPage: React.FC = () => {
       setIsGenerating(false);
     }
   };
-
-  const handleProviderChange = (value: string) => {
-    setProvider(value);
-    setModel(''); // Reset model when provider changes
-  };
-
-  const getModelsForProvider = (provider: string) => {
-    switch (provider) {
-      case 'google':
-        return ['gemini-2.0-flash', 'gemini-2.0-pro'];
-      case 'cerebras':
-        return ['llama-4-scout-17b-16e-instruct'];
-      case 'groq':
-        return ['qwen-qwq-32b'];
-      default:
-        return [];
-    }
-  };
-
-  const models = getModelsForProvider(provider);
 
   return (
     <div className="container mx-auto py-10">
@@ -135,36 +113,6 @@ const AgentMakerPage: React.FC = () => {
                   <Label htmlFor={mcp}>{mcp}</Label>
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="provider">Provider</Label>
-              <Select onValueChange={handleProviderChange}>
-                <SelectTrigger id="provider">
-                  <SelectValue placeholder="Select provider"/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="google">Google</SelectItem>
-                  <SelectItem value="cerebras">Cerebras</SelectItem>
-                  <SelectItem value="groq">Groq</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="model">Model</Label>
-              <Select onValueChange={(value) => setModel(value)} disabled={!provider}>
-                <SelectTrigger id="model">
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  {models.map((model) => (
-                    <SelectItem key={model} value={model}>{model}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
 
