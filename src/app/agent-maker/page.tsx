@@ -51,7 +51,7 @@ const AgentMakerPage: React.FC = () => {
       });
 
       // Redirect to the AgentViewerPage with the agentCardJson as a query parameter
-      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agent.agentCardJson)}`);
+      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(JSON.stringify(agent.agentCardJson))}`);
     } catch (error: any) {
       console.error('Error generating agent:', error);
       toast({
