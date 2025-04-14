@@ -23,7 +23,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@modelcontextprotocol/server-filesystem',
       description: 'File system access for reading/writing files',
-      status: 'active',
       details: {
         description:
           'MCP server for file system operations. Provides secure access to read and write files within specified directories.',
@@ -66,7 +65,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@modelcontextprotocol/server-memory',
       description: 'In-memory storage for AI agents',
-      status: 'active',
       details: {
         description: 'In-memory storage for AI agents',
         tools: [
@@ -99,7 +97,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@modelcontextprotocol/server-brave-search',
       description: 'Brave search server',
-      status: 'active',
       details: {
         description: 'Brave search server',
         tools: [
@@ -122,7 +119,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@modelcontextprotocol/server-github',
       description: 'GitHub server',
-      status: 'active',
       details: {
         description: 'GitHub server',
         tools: [
@@ -197,7 +193,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@patruff/server-terminator',
       description: 'File deletion and management tools',
-      status: 'inactive',
       details: {
         description: 'File deletion and management tools',
         tools: [
@@ -224,7 +219,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@patruff/server-flux',
       description: 'Server flux',
-      status: 'inactive',
       details: {
         description: 'Server flux',
         tools: [
@@ -251,7 +245,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@patruff/server-gmail-drive',
       description: 'Gmail drive server',
-      status: 'inactive',
       details: {
         description: 'Gmail drive server',
         tools: [
@@ -297,7 +290,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@abhiz123/todoist-mcp-server',
       description: 'Todoist MCP server',
-      status: 'inactive',
       details: {
         description: 'Todoist MCP server',
         tools: [
@@ -339,7 +331,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@patruff/server-lightrag',
       description: 'Lightrag server',
-      status: 'inactive',
       details: {
         description: 'Lightrag server',
         tools: [
@@ -367,7 +358,6 @@ const MCPManagementPage: React.FC = () => {
     {
       name: '@patruff/server-codesnip',
       description: 'Codesnip server',
-      status: 'inactive',
       details: {
         description: 'Codesnip server',
         tools: [
@@ -401,7 +391,6 @@ const MCPManagementPage: React.FC = () => {
       const newMcp = {
         name: newPackageName,
         description: 'New MCP',
-        status: 'inactive',
         details: {
           description: 'New MCP',
           tools: [],
