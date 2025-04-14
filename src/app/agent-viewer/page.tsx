@@ -1,13 +1,14 @@
 'use client';
 
 import React, {useState, useEffect} from 'react';
-import {useRouter, useSearchParams} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
 import {Label} from '@/components/ui/label';
 import {Copy} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 
 const AgentViewerPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -16,6 +17,10 @@ const AgentViewerPage: React.FC = () => {
   const [formattedJson, setFormattedJson] = useState<string>('');
   const [validationResult, setValidationResult] = useState<string>('');
   const {toast} = useToast();
+
+  const [provider, setProvider] = useState('Google');
+  const [icon, setIcon] = useState('🧙‍♂️'); // Default icon
+
   useEffect(() => {
     if (agentCardJsonParam) {
       try {
@@ -109,6 +114,39 @@ const AgentViewerPage: React.FC = () => {
           <CardDescription>View, validate, and download your Agent Card JSON.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Provider</Label>
+              <Select onValueChange={setProvider} value={provider}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select provider"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Google">Google</SelectItem>
+                  <SelectItem value="Cerebras">Cerebras</SelectItem>
+                  <SelectItem value="Groq">Groq</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Icon</Label>
+              <Select onValueChange={setIcon} value={icon}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select icon"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="🧙‍♂️">🧙‍♂️ Wizard</SelectItem>
+                  <SelectItem value="🗡️">🗡️ Sword</SelectItem>
+                  <SelectItem value="🛡️">🛡️ Shield</SelectItem>
+                  <SelectItem value="🏹">🏹 Bow</SelectItem>
+                  <SelectItem value="🧝">🧝 Elf</SelectItem>
+                  <SelectItem value="🐉">🐉 Dragon</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div>
             <Label htmlFor="agent-card-json">Agent Card JSON</Label>
             <Textarea id="agent-card-json" readOnly value={formattedJson} className="min-h-[300px]"/>
