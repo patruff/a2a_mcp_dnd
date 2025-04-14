@@ -11,11 +11,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {Label} from "@/components/ui/label"
-import {Textarea} from "@/components/ui/textarea"
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion"
+} from '@/components/ui/dialog';
+import {Label} from '@/components/ui/label';
+import {Textarea} from '@/components/ui/textarea';
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 
 const MCPManagementPage: React.FC = () => {
   const [mcps, setMcps] = useState([
@@ -24,7 +23,8 @@ const MCPManagementPage: React.FC = () => {
       description: 'File system access for reading/writing files',
       status: 'active',
       details: {
-        description: 'MCP server for file system operations. Provides secure access to read and write files within specified directories.',
+        description:
+          'MCP server for file system operations. Provides secure access to read and write files within specified directories.',
         tools: [
           {
             name: 'filesystem/readFile',
@@ -40,6 +40,21 @@ const MCPManagementPage: React.FC = () => {
               required: true,
             }],
           },
+          {
+            name: 'filesystem/listDirectory',
+            description: 'List contents of a directory',
+            parameters: [{name: 'path', type: 'string', required: true}],
+          },
+          {
+            name: 'filesystem/deleteFile',
+            description: 'Delete a file',
+            parameters: [{name: 'path', type: 'string', required: true}],
+          },
+          {
+            name: 'filesystem/createDirectory',
+            description: 'Create a directory',
+            parameters: [{name: 'path', type: 'string', required: true}],
+          },
         ],
         configurationOptions: [],
         command: 'npx @modelcontextprotocol/server-filesystem',
@@ -52,7 +67,28 @@ const MCPManagementPage: React.FC = () => {
       status: 'active',
       details: {
         description: 'In-memory storage for AI agents',
-        tools: [],
+        tools: [
+          {
+            name: 'memory/set',
+            description: 'Store a value in memory',
+            parameters: [{name: 'key', type: 'string', required: true}, {name: 'value', type: 'any', required: true}],
+          },
+          {
+            name: 'memory/get',
+            description: 'Retrieve a value from memory',
+            parameters: [{name: 'key', type: 'string', required: true}],
+          },
+          {
+            name: 'memory/delete',
+            description: 'Delete a value from memory',
+            parameters: [{name: 'key', type: 'string', required: true}],
+          },
+          {
+            name: 'memory/list',
+            description: 'List all keys in memory',
+            parameters: [],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @modelcontextprotocol/server-memory',
         usageExamples: [],
@@ -64,7 +100,18 @@ const MCPManagementPage: React.FC = () => {
       status: 'active',
       details: {
         description: 'Brave search server',
-        tools: [],
+        tools: [
+          {
+            name: 'brave/websearch',
+            description: 'Perform a web search using Brave Search',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+          {
+            name: 'brave/localsearch',
+            description: 'Search for local businesses and places',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @modelcontextprotocol/server-brave-search',
         usageExamples: [],
@@ -76,7 +123,70 @@ const MCPManagementPage: React.FC = () => {
       status: 'active',
       details: {
         description: 'GitHub server',
-        tools: [],
+        tools: [
+          {
+            name: 'github/searchRepositories',
+            description: 'Search for GitHub repositories',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+          {
+            name: 'github/getFileContents',
+            description: 'Get contents of a file from a repository',
+            parameters: [{name: 'owner', type: 'string', required: true}, {
+              name: 'repo',
+              type: 'string',
+              required: true,
+            }, {name: 'path', type: 'string', required: true}],
+          },
+          {
+            name: 'github/createRepository',
+            description: 'Create a new repository',
+            parameters: [{name: 'name', type: 'string', required: true}, {
+              name: 'description',
+              type: 'string',
+              required: false,
+            }],
+          },
+          {
+            name: 'github/createOrUpdateFile',
+            description: 'Create or update a file in a repository',
+            parameters: [{name: 'owner', type: 'string', required: true}, {
+              name: 'repo',
+              type: 'string',
+              required: true,
+            }, {name: 'path', type: 'string', required: true}, {
+              name: 'content',
+              type: 'string',
+              required: true,
+            }, {name: 'message', type: 'string', required: true}],
+          },
+          {
+            name: 'github/createIssue',
+            description: 'Create a new issue in a repository',
+            parameters: [{name: 'owner', type: 'string', required: true}, {
+              name: 'repo',
+              type: 'string',
+              required: true,
+            }, {name: 'title', type: 'string', required: true}, {
+              name: 'body',
+              type: 'string',
+              required: false,
+            }],
+          },
+          {
+            name: 'github/createPullRequest',
+            description: 'Create a new pull request',
+            parameters: [{name: 'owner', type: 'string', required: true}, {
+              name: 'repo',
+              type: 'string',
+              required: true,
+            }, {name: 'title', type: 'string', required: true}, {
+              name: 'head',
+              type: 'string',
+              required: true,
+            }, {name: 'base', type: 'string', required: true}],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @modelcontextprotocol/server-github',
         usageExamples: [],
@@ -88,7 +198,22 @@ const MCPManagementPage: React.FC = () => {
       status: 'inactive',
       details: {
         description: 'File deletion and management tools',
-        tools: [],
+        tools: [
+          {
+            name: 'terminator/terminateLocalFile',
+            description: 'Permanently delete a file from local filesystem',
+            parameters: [{name: 'path', type: 'string', required: true}],
+          },
+          {
+            name: 'terminator/terminateRemoteFile',
+            description: 'Permanently delete a file from a GitHub repository',
+            parameters: [{name: 'owner', type: 'string', required: true}, {
+              name: 'repo',
+              type: 'string',
+              required: true,
+            }, {name: 'path', type: 'string', required: true}],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @patruff/server-terminator',
         usageExamples: [],
@@ -100,7 +225,22 @@ const MCPManagementPage: React.FC = () => {
       status: 'inactive',
       details: {
         description: 'Server flux',
-        tools: [],
+        tools: [
+          {
+            name: 'flux/generateImage',
+            description: 'Generate an image using Flux model',
+            parameters: [{name: 'prompt', type: 'string', required: true}],
+          },
+          {
+            name: 'flux/editImage',
+            description: 'Edit an existing image with text prompts',
+            parameters: [{name: 'prompt', type: 'string', required: true}, {
+              name: 'image_url',
+              type: 'string',
+              required: true,
+            }],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @patruff/server-flux',
         usageExamples: [],
@@ -112,7 +252,41 @@ const MCPManagementPage: React.FC = () => {
       status: 'inactive',
       details: {
         description: 'Gmail drive server',
-        tools: [],
+        tools: [
+          {
+            name: 'gmail/searchEmail',
+            description: 'Search Gmail messages',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+          {
+            name: 'gmail/sendEmail',
+            description: 'Send a new email',
+            parameters: [{name: 'to', type: 'string', required: true}, {
+              name: 'subject',
+              type: 'string',
+              required: true,
+            }, {name: 'body', type: 'string', required: true}],
+          },
+          {
+            name: 'drive/searchDrive',
+            description: 'Search for files in Google Drive',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+          {
+            name: 'drive/createFolder',
+            description: 'Create a new folder in Google Drive',
+            parameters: [{name: 'name', type: 'string', required: true}],
+          },
+          {
+            name: 'drive/uploadFile',
+            description: 'Upload a file to Google Drive',
+            parameters: [{name: 'name', type: 'string', required: true}, {
+              name: 'content',
+              type: 'string',
+              required: true,
+            }],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @patruff/server-gmail-drive',
         usageExamples: [],
@@ -124,7 +298,37 @@ const MCPManagementPage: React.FC = () => {
       status: 'inactive',
       details: {
         description: 'Todoist MCP server',
-        tools: [],
+        tools: [
+          {
+            name: 'todoist/createTask',
+            description: 'Create a new task in Todoist',
+            parameters: [{name: 'content', type: 'string', required: true}],
+          },
+          {
+            name: 'todoist/getTasks',
+            description: 'Get a list of tasks from Todoist',
+            parameters: [],
+          },
+          {
+            name: 'todoist/updateTask',
+            description: 'Update an existing task in Todoist',
+            parameters: [{name: 'id', type: 'string', required: true}, {
+              name: 'content',
+              type: 'string',
+              required: false,
+            }],
+          },
+          {
+            name: 'todoist/deleteTask',
+            description: 'Delete a task from Todoist',
+            parameters: [{name: 'id', type: 'string', required: true}],
+          },
+          {
+            name: 'todoist/completeTask',
+            description: 'Mark a task as complete',
+            parameters: [{name: 'id', type: 'string', required: true}],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @abhiz123/todoist-mcp-server',
         usageExamples: [],
@@ -136,7 +340,23 @@ const MCPManagementPage: React.FC = () => {
       status: 'inactive',
       details: {
         description: 'Lightrag server',
-        tools: [],
+        tools: [
+          {
+            name: 'rag/query',
+            description: 'Query documents using RAG',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+          {
+            name: 'rag/insertText',
+            description: 'Insert text into the RAG system',
+            parameters: [{name: 'text', type: 'string', required: true}],
+          },
+          {
+            name: 'rag/insertFile',
+            description: 'Insert a file into the RAG system',
+            parameters: [{name: 'file_path', type: 'string', required: true}],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @patruff/server-lightrag',
         usageExamples: [],
@@ -148,15 +368,30 @@ const MCPManagementPage: React.FC = () => {
       status: 'inactive',
       details: {
         description: 'Codesnip server',
-        tools: [],
+        tools: [
+          {
+            name: 'codesnip/editSnippet',
+            description: 'Edit a specific code snippet in a file',
+            parameters: [{name: 'file_path', type: 'string', required: true}, {
+              name: 'snippet_id',
+              type: 'string',
+              required: true,
+            }, {name: 'new_content', type: 'string', required: true}],
+          },
+          {
+            name: 'codesnip/findSnippets',
+            description: 'Find code snippets matching a pattern',
+            parameters: [{name: 'query', type: 'string', required: true}],
+          },
+        ],
         configurationOptions: [],
         command: 'npx @patruff/server-codesnip',
         usageExamples: [],
       },
     },
   ]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newPackageName, setNewPackageName] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const addMcp = () => {
     if (newPackageName) {
