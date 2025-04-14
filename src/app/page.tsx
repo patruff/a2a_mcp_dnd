@@ -33,32 +33,6 @@ export default function LandingPage() {
             </Card>
             <Card>
               <CardContent>
-                <Link href="/interaction-visualizer" className="flex items-center space-x-2">
-                  <Button variant="outline">
-                    <Home className="h-4 w-4 mr-2"/>
-                    Interaction Visualizer
-                  </Button>
-                </Link>
-                <p className="text-sm text-muted-foreground">
-                  Visualize and summarize interactions between agents.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent>
-                <Link href="/model-management" className="flex items-center space-x-2">
-                  <Button variant="outline">
-                    <Home className="h-4 w-4 mr-2"/>
-                    Model Management
-                  </Button>
-                </Link>
-                <p className="text-sm text-muted-foreground">
-                  Configure and switch between different LLM providers.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent>
                 <Link href="/mcp-management" className="flex items-center space-x-2">
                   <Button variant="outline">
                     <Home className="h-4 w-4 mr-2"/>
@@ -76,3 +50,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

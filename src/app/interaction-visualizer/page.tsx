@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 
@@ -19,3 +20,4 @@ const InteractionVisualizerPage: React.FC = () => {
 };
 
 export default InteractionVisualizerPage;
+
