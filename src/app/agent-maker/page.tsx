@@ -80,8 +80,10 @@ const AgentMakerPage: React.FC = () => {
         defaultInputModes: ["text"],
         defaultOutputModes: ["text"],
         provider: {
+            name: selectedProvider,
             organization: "A2A Samples"
         },
+        model: selectedModel,
         version: "0.3.0",
         capabilities: {
             streaming: false,
@@ -226,7 +228,7 @@ const AgentMakerPage: React.FC = () => {
     };
 
     const agentCardJsonString = JSON.stringify(agentCard, null, 2);
-    setAgentCardJson(agentCardJsonString)
+    //setAgentCardJson(agentCardJsonString)
     router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJsonString)}`);
     
   };
