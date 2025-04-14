@@ -13,16 +13,16 @@ import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
 
 const AgentMakerPage: React.FC = () => {
-  const [agentName, setAgentName] = React.useState('');
-  const [agentType, setAgentType] = React.useState('');
-  const [agentDescription, setAgentDescription] = React.useState('');
-  const [agentUrl, setAgentUrl] = React.useState('');
-  const [agentIcon, setAgentIcon] = React.useState('');
-  const [agentThemeColor, setAgentThemeColor] = React.useState('');
+  const [agentName, setAgentName] = React.useState('DefaultAgentName');
+  const [agentType, setAgentType] = React.useState('service');
+  const [agentDescription, setAgentDescription] = React.useState('Default agent description.');
+  const [agentUrl, setAgentUrl] = React.useState('http://localhost:41250');
+  const [agentIcon, setAgentIcon] = React.useState('💻');
+  const [agentThemeColor, setAgentThemeColor] = React.useState('#4285F4');
   const [selectedMcps, setSelectedMcps] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState(false);
-  const [selectedProvider, setSelectedProvider] = React.useState<string>('');
-  const [selectedModel, setSelectedModel] = React.useState<string>('');
+  const [selectedProvider, setSelectedProvider] = React.useState<string>('Google');
+  const [selectedModel, setSelectedModel] = React.useState<string>('gemini-2-flash');
   const [agentCardJson, setAgentCardJson] = React.useState<string>('');
   const [skillDescription, setSkillDescription] = React.useState('');
 
@@ -178,14 +178,14 @@ const AgentMakerPage: React.FC = () => {
   const handleSubmit = async () => {
     setIsGenerating(true);
     try {
-      const agentCardJsonString = generateAgentCardJson();
+      //const agentCardJsonString = generateAgentCardJson();
 
-      setAgentCardJson(agentCardJsonString);
+      //setAgentCardJson(agentCardJsonString);
 
-      toast({
-        title: 'Agent Generated!',
-        description: 'Your agent has been successfully generated.',
-      });
+      //toast({
+        //title: 'Agent Generated!',
+        //description: 'Your agent has been successfully generated.',
+      //});
 
       //router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJsonString)}`);
 
@@ -223,7 +223,36 @@ const AgentMakerPage: React.FC = () => {
         url: agentUrl,
         icon: agentIcon,
         theme_color: agentThemeColor,
+        defaultInputModes: ["text"],
+        defaultOutputModes: ["text"],
+        provider: {
+            organization: "A2A Samples"
+        },
+        version: "0.3.0",
+        capabilities: {
+            streaming: false,
+            pushNotifications: false,
+            stateTransitionHistory: true
+        },
+        authentication: null,
+        skills: [
+            {
+                id: "code_assistance",
+                name: "Code Assistance",
+                description: skillDescription,
+                tags: ["coding", "development", "file-management"]
+            },
+            {
+                id: "task_management",
+                name: "Task Management",
+                description: "Helps manage tasks and projects",
+                tags: ["productivity", "organization"]
+            }
+        ],
         metadata: {
+            icon: agentIcon,
+            theme_color: agentThemeColor,
+            display_name: agentName,
             mcps: selectedMcps.map(mcp => {
                 let tools;
                 let env = {};
