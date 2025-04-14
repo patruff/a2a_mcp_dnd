@@ -18,6 +18,8 @@ const AgentMakerPage: React.FC = () => {
   const [agentDescription, setAgentDescription] = React.useState('');
   const [selectedMcps, setSelectedMcps] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [selectedProvider, setSelectedProvider] = React.useState<string>('');
+  const [selectedModel, setSelectedModel] = React.useState<string>('');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -38,6 +40,8 @@ const AgentMakerPage: React.FC = () => {
         selectedMcps: selectedMcps,
         mcpConfigurations: {},
         additionalAttributes: {},
+        selectedProvider: selectedProvider,
+        selectedModel: selectedModel,
       };
 
       // Await the createAgent call to get the generated agent data
@@ -60,6 +64,12 @@ const AgentMakerPage: React.FC = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const providerModels: { [key: string]: string[] } = {
+    Google: ['gemini-2-flash'],
+    Cerebras: ['llama-4-scout-17b-16e-instruct'],
+    Groq: ['qwen-qwq-32b'],
   };
 
   return (
@@ -113,6 +123,37 @@ const AgentMakerPage: React.FC = () => {
                   <Label htmlFor={mcp}>{mcp}</Label>
                 </div>
               ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="provider">Provider</Label>
+              <Select onValueChange={(value) => setSelectedProvider(value)}>
+                <SelectTrigger id="provider">
+                  <SelectValue placeholder="Select provider"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Google">Google</SelectItem>
+                  <SelectItem value="Cerebras">Cerebras</SelectItem>
+                  <SelectItem value="Groq">Groq</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="model">Model</Label>
+              <Select onValueChange={(value) => setSelectedModel(value)} disabled={!selectedProvider}>
+                <SelectTrigger id="model">
+                  <SelectValue placeholder="Select model"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {selectedProvider &&
+                    providerModels[selectedProvider]?.map((model) => (
+                      <SelectItem key={model} value={model}>
+                        {model}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

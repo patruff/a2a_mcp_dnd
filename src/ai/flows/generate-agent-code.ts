@@ -1,11 +1,7 @@
-// use server'
+'use server';
 
 /**
  * @fileOverview Generates agent code and AgentCard JSON from a natural language description.
- *
- * - generateAgentCode - A function that handles the agent code generation process.
- * - GenerateAgentCodeInput - The input type for the generateAgentCode function.
- * - GenerateAgentCodeOutput - The return type for the generateAgentCode function.
  */
 
 import {ai} from '@/ai/ai-instance';
@@ -18,6 +14,8 @@ const GenerateAgentCodeInputSchema = z.object({
   selectedMcps: z.array(z.string()).describe('An array of selected MCPs (Model Context Protocols) to include in the agent.'),
   mcpConfigurations: z.record(z.any()).describe('A record of MCP configurations specific to the selected MCPs.'),
   additionalAttributes: z.record(z.any()).describe('A record of additional attributes for the agent (stats, skills, goals, etc.).'),
+  selectedProvider: z.string().describe('The selected LLM provider (Google, Cerebras, Groq).'),
+  selectedModel: z.string().describe('The selected LLM model.'),
 });
 
 export type GenerateAgentCodeInput = z.infer<typeof GenerateAgentCodeInputSchema>;
@@ -46,6 +44,8 @@ const generateAgentCodePrompt = ai.definePrompt({
       selectedMcps: z.array(z.string()).describe('An array of selected MCPs (Model Context Protocols) to include in the agent.'),
       mcpConfigurations: z.record(z.any()).describe('A record of MCP configurations specific to the selected MCPs.'),
       additionalAttributes: z.record(z.any()).describe('A record of additional attributes for the agent (stats, skills, goals, etc.).'),
+      selectedProvider: z.string().describe('The selected LLM provider (Google, Cerebras, Groq).'),
+      selectedModel: z.string().describe('The selected LLM model.'),
     }),
   },
   output: {
@@ -65,6 +65,8 @@ Description: {{{description}}}
 Selected MCPs: {{#each selectedMcps}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 MCP Configurations: {{{mcpConfigurations}}}
 Additional Attributes: {{{additionalAttributes}}}
+Selected Provider: {{{selectedProvider}}}
+Selected Model: {{{selectedModel}}}
 
 Ensure the generated agent code is well-structured, efficient, and adheres to best practices. The agent should seamlessly integrate with the selected MCPs, utilizing their functionalities as described in their respective documentation. The AgentCard JSON should accurately reflect the agent's properties, capabilities, and dependencies. The configuration file should include all necessary settings for deploying and running the agent.
 

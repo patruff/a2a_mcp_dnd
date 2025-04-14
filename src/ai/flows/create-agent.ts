@@ -2,10 +2,6 @@
 
 /**
  * @fileOverview Creates an AI agent based on the provided specifications.
- *
- * - createAgent - A function that handles the agent creation process.
- * - CreateAgentInput - The input type for the createAgent function.
- * - CreateAgentOutput - The return type for the createAgent function.
  */
 
 import {ai} from '@/ai/ai-instance';
@@ -19,6 +15,8 @@ const CreateAgentInputSchema = z.object({
   selectedMcps: z.array(z.string()).describe('An array of selected MCPs (Model Context Protocols) to include in the agent.'),
   mcpConfigurations: z.record(z.any()).describe('A record of MCP configurations specific to the selected MCPs.'),
   additionalAttributes: z.record(z.any()).describe('A record of additional attributes for the agent (stats, skills, goals, etc.).'),
+  selectedProvider: z.string().describe('The selected LLM provider (Google, Cerebras, Groq).'),
+  selectedModel: z.string().describe('The selected LLM model.'),
 });
 
 export type CreateAgentInput = z.infer<typeof CreateAgentInputSchema>;
@@ -52,5 +50,3 @@ const createAgentFlow = ai.defineFlow<
     return result;
   }
 );
-
-    
