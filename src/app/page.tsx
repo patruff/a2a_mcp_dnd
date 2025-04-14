@@ -2,7 +2,7 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
-import {Home} from 'lucide-react';
+import {Home, List} from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -42,6 +42,19 @@ export default function LandingPage() {
                 </Link>
                 <p className="text-sm text-muted-foreground">
                   Manage Model Context Protocol (MCP) components.
+                </p>
+              </CardContent>
+            </Card>
+             <Card>
+              <CardContent>
+                <Link href="/mcp-list" className="flex items-center space-x-2">
+                  <Button variant="outline">
+                    <List className="h-4 w-4 mr-2"/>
+                    MCP List
+                  </Button>
+                </Link>
+                <p className="text-sm text-muted-foreground">
+                  View available Model Context Protocol (MCP) components and their tools.
                 </p>
               </CardContent>
             </Card>
