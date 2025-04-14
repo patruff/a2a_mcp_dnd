@@ -10,6 +10,17 @@ import {Checkbox} from '@/components/ui/checkbox';
 import {Button} from '@/components/ui/button';
 import {createAgent, CreateAgentInput, CreateAgentOutput} from '@/ai/flows/create-agent';
 import {useToast} from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Icons } from "@/components/icons"
 
 const AgentMakerPage: React.FC = () => {
   const [agentName, setAgentName] = React.useState('');
@@ -20,6 +31,7 @@ const AgentMakerPage: React.FC = () => {
   const [generatedAgent, setGeneratedAgent] = React.useState<CreateAgentOutput | null>(null);
   const [provider, setProvider] = React.useState('');
   const [model, setModel] = React.useState('');
+    const [open, setOpen] = React.useState(false)
 
   const {toast} = useToast();
 
@@ -71,9 +83,9 @@ const AgentMakerPage: React.FC = () => {
       case 'google':
         return ['gemini-2.0-flash', 'gemini-2.0-pro'];
       case 'cerebras':
-        return ['cerebras-model-1', 'cerebras-model-2'];
+        return ['llama-4-scout-17b-16e-instruct'];
       case 'groq':
-        return ['groq-model-1', 'groq-model-2'];
+        return ['qwen-qwq-32b'];
       default:
         return [];
     }
@@ -184,7 +196,31 @@ const AgentMakerPage: React.FC = () => {
             </div>
             <div>
               <Label>Agent Card JSON</Label>
+              <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">View Agent Card JSON</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Agent Card JSON</DialogTitle>
+            <DialogDescription>
+             Here is the Agent Card
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
               <Textarea readOnly value={generatedAgent.agentCardJson} className="h-48"/>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
             </div>
             <div>
               <Label>Configuration File</Label>
