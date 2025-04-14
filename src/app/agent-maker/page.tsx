@@ -8,19 +8,9 @@ import {Textarea} from '@/components/ui/textarea';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Checkbox} from '@/components/ui/checkbox';
 import {Button} from '@/components/ui/button';
-import {createAgent, CreateAgentInput, CreateAgentOutput} from '@/ai/flows/create-agent';
+import {createAgent, CreateAgentInput} from '@/ai/flows/create-agent';
 import {useToast} from '@/hooks/use-toast';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Icons } from "@/components/icons"
+import {useRouter} from 'next/navigation';
 
 const AgentMakerPage: React.FC = () => {
   const [agentName, setAgentName] = React.useState('');
@@ -28,12 +18,11 @@ const AgentMakerPage: React.FC = () => {
   const [agentDescription, setAgentDescription] = React.useState('');
   const [selectedMcps, setSelectedMcps] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState(false);
-  const [generatedAgent, setGeneratedAgent] = React.useState<CreateAgentOutput | null>(null);
   const [provider, setProvider] = React.useState('');
   const [model, setModel] = React.useState('');
-    const [open, setOpen] = React.useState(false)
 
   const {toast} = useToast();
+  const router = useRouter();
 
   const availableMcps = ['filesystem_mcp', 'spanish_translation_mcp', 'weather_api_mcp'];
 
@@ -53,13 +42,15 @@ const AgentMakerPage: React.FC = () => {
         additionalAttributes: {},
       };
 
-      const agent: CreateAgentOutput = await createAgent(agentInput);
-      setGeneratedAgent(agent);
+      const agent = await createAgent(agentInput);
 
       toast({
         title: 'Agent Generated!',
         description: 'Your agent has been successfully generated.',
       });
+
+      // Redirect to the AgentViewerPage with the agentCardJson as a query parameter
+      router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agent.agentCardJson)}`);
     } catch (error: any) {
       console.error('Error generating agent:', error);
       toast({
@@ -67,7 +58,6 @@ const AgentMakerPage: React.FC = () => {
         description: `Failed to generate agent: ${error.message}`,
         variant: 'destructive',
       });
-      setGeneratedAgent(null);
     } finally {
       setIsGenerating(false);
     }
@@ -182,57 +172,6 @@ const AgentMakerPage: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
-
-      {generatedAgent && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Generated Agent Details</CardTitle>
-            <CardDescription>Here are the details of the generated agent.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-6">
-            <div>
-              <Label>Agent Code</Label>
-              <Textarea readOnly value={generatedAgent.agentCode} className="h-48"/>
-            </div>
-            <div>
-              <Label>Agent Card JSON</Label>
-              <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline">View Agent Card JSON</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Agent Card JSON</DialogTitle>
-            <DialogDescription>
-             Here is the Agent Card
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Textarea readOnly value={generatedAgent.agentCardJson} className="h-48"/>
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-            </div>
-            <div>
-              <Label>Configuration File</Label>
-              <Textarea readOnly value={generatedAgent.configurationFile} className="h-48"/>
-            </div>
-            <div>
-              <Label>Documentation</Label>
-              <Textarea readOnly value={generatedAgent.documentation} className="h-48"/>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
