@@ -499,6 +499,19 @@ const AgentMakerPage: React.FC = () => {
     'lawful evil', 'neutral evil', 'chaotic evil',
   ];
 
+  const dndNpcs = [
+    'Bartender',
+    'Blacksmith',
+    'Old Man',
+    'Woman in Distress',
+    'Merchant',
+    'Guard',
+    'Innkeeper',
+    'Beggar',
+    'Noble',
+    'Mystic'
+  ];
+
   React.useEffect(() => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
