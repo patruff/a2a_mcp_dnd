@@ -388,6 +388,10 @@ const AgentMakerPage: React.FC = () => {
                 racialTraits: [], // Services don't have racial traits
             };
         }
+        else if (agentType === 'NPC') {
+            const npcSkill = npcSkills[agentName] || 'default';
+            skillId = npcSkill; // Use the mapped skill ID for NPCs
+        }
         else {
             skillId = selectedClass;
             switch (selectedRace) {
@@ -600,6 +604,7 @@ const AgentMakerPage: React.FC = () => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
       setAgentDescription('Calculation, Memory, Scheduling');
+        setSelectedClass('service');
     } else if (agentType === 'NPC') {
         setAgentIcon('👤');
         setAgentDescription(`Generic ${agentName} NPC Description`);
@@ -654,6 +659,8 @@ const AgentMakerPage: React.FC = () => {
                 if (value === 'service') {
                   setAgentIcon('🤖');
                   setAgentDescription('Calculation, Memory, Scheduling');
+                    setSelectedClass('service');
+
                 } else if (value === 'NPC') {
                   setAgentIcon('👤');
                   setAgentDescription(`Generic ${agentName} NPC Description`);
@@ -860,5 +867,3 @@ const AgentMakerPage: React.FC = () => {
 };
 
 export default AgentMakerPage;
-
-
