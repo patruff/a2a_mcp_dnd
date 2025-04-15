@@ -1,8 +1,7 @@
-
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
-import {Home, List} from 'lucide-react';
+import {Home, List, User} from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -45,10 +44,22 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
+            <Card>
+              <CardContent>
+                <Link href="/agent-list" className="flex items-center space-x-2">
+                  <Button variant="outline">
+                    <User className="h-4 w-4 mr-2"/>
+                    Agent List
+                  </Button>
+                </Link>
+                <p className="text-sm text-muted-foreground">
+                  View a list of created agents, showing their name, type, and class.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </CardContent>
       </Card>
     </div>
   );
 }
-
