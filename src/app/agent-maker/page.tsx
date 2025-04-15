@@ -318,7 +318,7 @@ const AgentMakerPage: React.FC = () => {
               tools = [
                 {name: 'codesnip/editSnippet', description: 'Edit a specific code snippet in a file'},
                 {name: 'codesnip/findSnippets', description: 'Find code snippets matching a pattern'},
-              ];
+                ];
               capabilities = ['code_editing'];
               break;
             default:
@@ -385,154 +385,141 @@ const AgentMakerPage: React.FC = () => {
     'Acolyte',
   ];
 
-  const themeColors = [
-      '#1A237E', // Dark Blue
-      '#EEEEEE', // Light Gray
-      '#00BCD4', // Teal
-      '#4CAF50', // Green
-      '#FFC107', // Amber
-      '#FF5722', // Deep Orange
-      '#673AB7', // Deep Purple
-      '#795548', // Brown
-      '#607D8B', // Blue Grey
-      '#9E9E9E'  // Grey
-  ];
-
-  const getSkillDetails = () => {
-    let skillId;
-    if (agentType === 'service') {
-      return {
-        id: 'service',
-        name: 'Service',
-        description: 'Calculation, Memory, Scheduling',
-        tags: ['service'],
-      };
-    } else if (agentType === 'NPC') {
-      // Define skill sets for various NPCs
-      const npcSkills = {
-        Bartender: {
-          id: 'bartending',
-          name: 'Bartending',
-          description: 'Mixing drinks and managing the bar',
-          tags: ['service', 'bar', 'drinks'],
-        },
-        'Old Man': {
-          id: 'wisdom',
-          name: 'Wisdom',
-          description: 'Providing advice and guidance',
-          tags: ['knowledge', 'advice'],
-        },
-        'Woman in Distress': {
-          id: 'deception',
-          name: 'Deception',
-          description: 'Appearing vulnerable to gain assistance',
-          tags: ['acting', 'vulnerability'],
-        },
-        Blacksmith: {
-          id: 'blacksmithing',
-          name: 'Blacksmithing',
-          description: 'Crafting metal items',
-          tags: ['crafting', 'metalwork'],
-        },
-        'Traveling Merchant': {
-          id: 'trading',
-          name: 'Trading',
-          description: 'Buying and selling goods',
-          tags: ['commerce', 'negotiation'],
-        },
-        'Town Guard': {
-          id: 'guarding',
-          name: 'Guarding',
-          description: 'Protecting the town and enforcing laws',
-          tags: ['security', 'law'],
-        },
-        'Wise Hermit': {
-          id: 'herbalism',
-          name: 'Herbalism',
-          description: 'Knowledge of plants and their uses',
-          tags: ['nature', 'medicine'],
-        },
-        Noble: {
-          id: 'diplomacy',
-          name: 'Diplomacy',
-          description: 'Negotiating and managing social situations',
-          tags: ['politics', 'social'],
-        },
-        Jester: {
-          id: 'performance',
-          name: 'Performance',
-          description: 'Entertaining and distracting with humor',
-          tags: ['entertainment', 'humor'],
-        },
-        Acolyte: {
-          id: 'healing',
-          name: 'Healing',
-          description: 'Providing religious and medical aid',
-          tags: ['religion', 'medicine'],
-        },
-      };
-      return npcSkills[agentName] || {
-        id: 'default',
-        name: 'Default Skill',
-        description: 'A default skill with no specific capabilities.',
-        tags: ['default'],
-      };
-    }
-    else {
-      skillId = selectedClass;
-    }
-    const skillOptions = {
-      wizard: {
-        id: 'magic',
-        name: 'Magic',
-        description: 'Utilizes magical powers for various tasks.',
-        tags: ['magic', 'powers'],
-      },
-      rogue: {
-        id: 'stealth',
-        name: 'Stealth',
-        description: 'Executes covert operations and remains unseen.',
-        tags: ['covert', 'operations'],
-      },
-      cleric: {
-        id: 'healing',
-        name: 'Healing',
-        description: 'Provides medical assistance and support.',
-        tags: ['medical', 'support'],
-      },
-      fighter: {
-        id: 'combat',
-        name: 'Combat',
-        description: 'Engages in combat and strategic battles.',
-        tags: ['combat', 'strategy'],
-      },
-      bard: {
-        id: 'performance',
-        name: 'Performance',
-        description: 'Entertains and inspires through music and stories.',
-        tags: ['performance', 'inspiration'],
-      },
-      sorcerer: {
-        id: 'elemental_magic',
-        name: 'Elemental Magic',
-        description: 'Wields powerful elemental magic.',
-        tags: ['magic', 'elements'],
-      },
-      service: {
-        id: 'service',
-        name: 'Service',
-        description: 'Calculation, Memory, Scheduling',
-        tags: ['service'],
-      },
-      default: {
-        id: 'default',
-        name: 'Default Skill',
-        description: 'A default skill with no specific capabilities.',
-        tags: ['default'],
-      },
+    const getSkillDetails = () => {
+        let skillId;
+        if (agentType === 'service') {
+            return {
+                id: 'service',
+                name: 'Service',
+                description: 'Calculation, Memory, Scheduling',
+                tags: ['service'],
+            };
+        } else if (agentType === 'NPC') {
+            // Define skill sets for various NPCs
+            const npcSkills = {
+                Bartender: {
+                    id: 'bartending',
+                    name: 'Bartending',
+                    description: 'Mixing drinks and managing the bar',
+                    tags: ['service', 'bar', 'drinks'],
+                },
+                'Old Man': {
+                    id: 'wisdom',
+                    name: 'Wisdom',
+                    description: 'Providing advice and guidance',
+                    tags: ['knowledge', 'advice'],
+                },
+                'Woman in Distress': {
+                    id: 'deception',
+                    name: 'Deception',
+                    description: 'Appearing vulnerable to gain assistance',
+                    tags: ['acting', 'vulnerability'],
+                },
+                Blacksmith: {
+                    id: 'blacksmithing',
+                    name: 'Blacksmithing',
+                    description: 'Crafting metal items',
+                    tags: ['crafting', 'metalwork'],
+                },
+                'Traveling Merchant': {
+                    id: 'trading',
+                    name: 'Trading',
+                    description: 'Buying and selling goods',
+                    tags: ['commerce', 'negotiation'],
+                },
+                'Town Guard': {
+                    id: 'guarding',
+                    name: 'Guarding',
+                    description: 'Protecting the town and enforcing laws',
+                    tags: ['security', 'law'],
+                },
+                'Wise Hermit': {
+                    id: 'herbalism',
+                    name: 'Herbalism',
+                    description: 'Knowledge of plants and their uses',
+                    tags: ['nature', 'medicine'],
+                },
+                Noble: {
+                    id: 'diplomacy',
+                    name: 'Diplomacy',
+                    description: 'Negotiating and managing social situations',
+                    tags: ['politics', 'social'],
+                },
+                Jester: {
+                    id: 'performance',
+                    name: 'Performance',
+                    description: 'Entertaining and distracting with humor',
+                    tags: ['entertainment', 'humor'],
+                },
+                Acolyte: {
+                    id: 'healing',
+                    name: 'Healing',
+                    description: 'Providing religious and medical aid',
+                    tags: ['religion', 'medicine'],
+                },
+            };
+            return npcSkills[agentName] || {
+                id: 'default',
+                name: 'Default Skill',
+                description: 'A default skill with no specific capabilities.',
+                tags: ['default'],
+            };
+        }
+        else {
+            skillId = selectedClass;
+        }
+        const skillOptions = {
+            wizard: {
+                id: 'magic',
+                name: 'Magic',
+                description: 'Utilizes magical powers for various tasks.',
+                tags: ['magic', 'powers'],
+            },
+            rogue: {
+                id: 'stealth',
+                name: 'Stealth',
+                description: 'Executes covert operations and remains unseen.',
+                tags: ['covert', 'operations'],
+            },
+            cleric: {
+                id: 'healing',
+                name: 'Healing',
+                description: 'Provides medical assistance and support.',
+                tags: ['medical', 'support'],
+            },
+            fighter: {
+                id: 'combat',
+                name: 'Combat',
+                description: 'Engages in combat and strategic battles.',
+                tags: ['combat', 'strategy'],
+            },
+            bard: {
+                id: 'performance',
+                name: 'Performance',
+                description: 'Entertains and inspires through music and stories.',
+                tags: ['performance', 'inspiration'],
+            },
+            sorcerer: {
+                id: 'elemental_magic',
+                name: 'Elemental Magic',
+                description: 'Wields powerful elemental magic.',
+                tags: ['magic', 'elements'],
+            },
+            service: {
+                id: 'service',
+                name: 'Service',
+                description: 'Calculation, Memory, Scheduling',
+                tags: ['service'],
+            },
+            default: {
+                id: 'default',
+                name: 'Default Skill',
+                description: 'A default skill with no specific capabilities.',
+                tags: ['default'],
+            },
+        };
+        return skillOptions[skillId] || skillOptions.default;
     };
-    return skillOptions[skillId] || skillOptions.default;
-  };
 
   React.useEffect(() => {
     if (agentType === 'service') {
@@ -667,19 +654,13 @@ const AgentMakerPage: React.FC = () => {
               </div>
             )}
             <div>
-              <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
-              <Select onValueChange={(value) => setAgentThemeColor(value)} value={agentThemeColor}>
-                <SelectTrigger id="agent-theme-color">
-                  <SelectValue placeholder="Select theme color"/>
-                </SelectTrigger>
-                <SelectContent>
-                  {themeColors.map((color) => (
-                    <SelectItem key={color} value={color}>
-                      {color}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
+                <Input
+                    type="color"
+                    id="agent-theme-color"
+                    value={agentThemeColor}
+                    onChange={(e) => setAgentThemeColor(e.target.value)}
+                />
             </div>
           </div>
           <div>
