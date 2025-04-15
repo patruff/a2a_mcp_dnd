@@ -378,6 +378,7 @@ const AgentMakerPage: React.FC = () => {
         let skillId;
         let language;
         let racialTraits = [];
+
         if (agentType === 'service') {
             return {
                 id: 'service',
@@ -388,9 +389,9 @@ const AgentMakerPage: React.FC = () => {
                 racialTraits: [], // Services don't have racial traits
             };
         }
-        else if (agentType === 'NPC') {
-            const npcSkill = npcSkills[agentName] || 'default';
-            skillId = npcSkill; // Use the mapped skill ID for NPCs
+         else if (agentType === 'NPC') {
+          const npcSkill = npcSkills[agentName] || 'default';
+          return npcSkillsDetails[npcSkill] || npcSkillsDetails.default;
         }
         else {
             skillId = selectedClass;
@@ -486,78 +487,6 @@ const AgentMakerPage: React.FC = () => {
                 language: 'N/A',
                 racialTraits: [],
             },
-              blacksmith: {
-                  id: 'blacksmithing',
-                  name: 'Blacksmithing',
-                  description: 'Crafts and repairs metal items.',
-                  tags: ['crafting', 'metalworking'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              innkeeper: {
-                  id: 'innkeeping',
-                  name: 'Innkeeping',
-                  description: 'Manages and serves customers at an inn.',
-                  tags: ['service', 'hospitality'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              merchant: {
-                  id: 'trading',
-                  name: 'Trading',
-                  description: 'Buys and sells goods for profit.',
-                  tags: ['commerce', 'negotiation'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              guard: {
-                  id: 'guarding',
-                  name: 'Guarding',
-                  description: 'Protects and patrols areas.',
-                  tags: ['protection', 'security'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              noble: {
-                  id: 'nobility',
-                  name: 'Nobility',
-                  description: 'Commands respect and manages estates.',
-                  tags: ['leadership', 'management'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              mystic: {
-                  id: 'divination',
-                  name: 'Divination',
-                  description: 'Foretells the future and provides guidance.',
-                  tags: ['magic', 'guidance'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              beggar: {
-                  id: 'begging',
-                  name: 'Begging',
-                  description: 'Solicits for alms and survival.',
-                  tags: ['survival', 'streetwise'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-              distress: {
-                  id: 'aid',
-                  name: 'Aid',
-                  description: 'Solicits help from others and requires help.',
-                  tags: ['survival', 'reliance'],
-                  language: language,
-                  racialTraits: racialTraits,
-              },
-            default: {
-                id: 'default',
-                name: 'Default Skill',
-                description: 'A default skill with no specific capabilities.',
-                tags: ['default'],
-                language: language,
-                racialTraits: racialTraits,
-            },
         };
         return skillOptions[skillId] || skillOptions.default;
     };
@@ -593,6 +522,72 @@ const AgentMakerPage: React.FC = () => {
         'Noble': 'nobility',
         'Mystic': 'divination',
     };
+  const npcSkillsDetails = {
+    innkeeping: {
+      id: 'innkeeping',
+      name: 'Innkeeping',
+      description: 'Manages and serves customers at an inn.',
+      tags: ['service', 'hospitality'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    blacksmithing: {
+      id: 'blacksmithing',
+      name: 'Blacksmithing',
+      description: 'Crafts and repairs metal items.',
+      tags: ['crafting', 'metalworking'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    aid: {
+      id: 'aid',
+      name: 'Aid',
+      description: 'Solicits help from others and provides help.',
+      tags: ['survival', 'reliance'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    trading: {
+      id: 'trading',
+      name: 'Trading',
+      description: 'Buys and sells goods for profit.',
+      tags: ['commerce', 'negotiation'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    guarding: {
+      id: 'guarding',
+      name: 'Guarding',
+      description: 'Protects and patrols areas.',
+      tags: ['protection', 'security'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    nobility: {
+      id: 'nobility',
+      name: 'Nobility',
+      description: 'Commands respect and manages estates.',
+      tags: ['leadership', 'management'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    divination: {
+      id: 'divination',
+      name: 'Divination',
+      description: 'Foretells the future and provides guidance.',
+      tags: ['magic', 'guidance'],
+      language: 'Common',
+      racialTraits: [],
+    },
+    default: {
+      id: 'default',
+      name: 'Default Skill',
+      description: 'A default skill with no specific capabilities.',
+      tags: ['default'],
+      language: 'Common',
+      racialTraits: [],
+    },
+  };
 
   const dndGenders = [
       'male',
@@ -867,3 +862,4 @@ const AgentMakerPage: React.FC = () => {
 };
 
 export default AgentMakerPage;
+
