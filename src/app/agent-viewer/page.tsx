@@ -20,7 +20,10 @@ const AgentViewerPage: React.FC = () => {
 
   const [provider, setProvider] = useState('Google');
   const [icon, setIcon] = useState('🧙‍♂️'); // Default icon
-    const [model, setModel] = useState('gemini-2-flash');
+  const [model, setModel] = useState('gemini-2-flash');
+  const [skillName, setSkillName] = useState('Default Skill');
+  const [skillDescription, setSkillDescription] = useState('A default skill with no specific capabilities.');
+
 
   useEffect(() => {
     if (agentCardJsonParam) {
@@ -29,11 +32,17 @@ const AgentViewerPage: React.FC = () => {
         setAgentCardJson(decodedJson);
         formatAndDisplay(decodedJson);
 
-          // Parse the JSON to extract provider and icon values
-          const parsedJson = JSON.parse(decodedJson);
-          setProvider(parsedJson.provider.name || 'Google');
-          setIcon(parsedJson.icon || '🧙‍♂️');
-            setModel(parsedJson.provider.preferred_model || 'gemini-2-flash');
+        // Parse the JSON to extract provider and icon values
+        const parsedJson = JSON.parse(decodedJson);
+        setProvider(parsedJson.provider.name || 'Google');
+        setIcon(parsedJson.metadata.icon || '🧙‍♂️');
+        setModel(parsedJson.provider.preferred_model || 'gemini-2-flash');
+
+        // Extract skill details
+        if (parsedJson.skills && parsedJson.skills.length > 0) {
+          setSkillName(parsedJson.skills[0].name || 'Default Skill');
+          setSkillDescription(parsedJson.skills[0].description || 'No skill description');
+        }
       } catch (error: any) {
         console.error('Error decoding or parsing agentCardJson:', error);
         setValidationResult(`Error: ${error.message}`);
@@ -113,24 +122,24 @@ const AgentViewerPage: React.FC = () => {
     }
   };
 
-    const handleProviderChange = (newProvider: string) => {
-        setProvider(newProvider);
-        // Update the model based on the new provider
-        switch (newProvider) {
-            case 'Google':
-                setModel('gemini-2-flash');
-                break;
-            case 'Cerebras':
-                setModel('llama-4-scout-17b-16e-instruct');
-                break;
-            case 'Groq':
-                setModel('qwen-qwq-32b');
-                break;
-            default:
-                setModel('');
-                break;
-        }
-    };
+  const handleProviderChange = (newProvider: string) => {
+    setProvider(newProvider);
+    // Update the model based on the new provider
+    switch (newProvider) {
+      case 'Google':
+        setModel('gemini-2-flash');
+        break;
+      case 'Cerebras':
+        setModel('llama-4-scout-17b-16e-instruct');
+        break;
+      case 'Groq':
+        setModel('qwen-qwq-32b');
+        break;
+      default:
+        setModel('');
+        break;
+    }
+  };
 
   return (
     <div className="container mx-auto py-10">
@@ -155,25 +164,25 @@ const AgentViewerPage: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
-              <div>
-                  <Label>Model</Label>
-                  <Select onValueChange={setModel} value={model}>
-                      <SelectTrigger>
-                          <SelectValue placeholder="Select model"/>
-                      </SelectTrigger>
-                      <SelectContent>
-                          {provider === 'Google' && (
-                              <SelectItem value="gemini-2-flash">gemini-2-flash</SelectItem>
-                          )}
-                          {provider === 'Cerebras' && (
-                              <SelectItem value="llama-4-scout-17b-16e-instruct">llama-4-scout-17b-16e-instruct</SelectItem>
-                          )}
-                          {provider === 'Groq' && (
-                              <SelectItem value="qwen-qwq-32b">qwen-qwq-32b</SelectItem>
-                          )}
-                      </SelectContent>
-                  </Select>
-              </div>
+            <div>
+              <Label>Model</Label>
+              <Select onValueChange={setModel} value={model}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select model"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {provider === 'Google' && (
+                    <SelectItem value="gemini-2-flash">gemini-2-flash</SelectItem>
+                  )}
+                  {provider === 'Cerebras' && (
+                    <SelectItem value="llama-4-scout-17b-16e-instruct">llama-4-scout-17b-16e-instruct</SelectItem>
+                  )}
+                  {provider === 'Groq' && (
+                    <SelectItem value="qwen-qwq-32b">qwen-qwq-32b</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <Label>Icon</Label>
               <Select onValueChange={setIcon} value={icon}>
@@ -187,9 +196,18 @@ const AgentViewerPage: React.FC = () => {
                   <SelectItem value="🏹">🏹 Bow</SelectItem>
                   <SelectItem value="🧝">🧝 Elf</SelectItem>
                   <SelectItem value="🐉">🐉 Dragon</SelectItem>
+                  <SelectItem value="👤">👤 Generic</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div>
+            <Label htmlFor="skill-name">Skill Name</Label>
+            <Input id="skill-name" readOnly value={skillName}/>
+          </div>
+          <div>
+            <Label htmlFor="skill-description">Skill Description</Label>
+            <Textarea id="skill-description" readOnly value={skillDescription} className="min-h-[100px]"/>
           </div>
 
           <div>
