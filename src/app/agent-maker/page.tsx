@@ -105,7 +105,6 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'brave/localsearch', description: 'Search for local businesses and places'},
                 ];
                 capabilities = ['search'];
-                env = {BRAVE_API_KEY: '${BRAVE_API_KEY}'};
                 break;
               case '@modelcontextprotocol/server-github':
                 tools = [
@@ -117,7 +116,6 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'github/createPullRequest', description: 'Create a new pull request'},
                 ];
                 capabilities = ['github'];
-                env = {GITHUB_TOKEN: '${GITHUB_TOKEN}'};
                 break;
               case '@patruff/server-terminator':
                 tools = [
@@ -125,7 +123,6 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'terminator/terminateRemoteFile', description: 'Permanently delete a file from a GitHub repository'},
                 ];
                 capabilities = ['terminator'];
-                env = {GITHUB_TOKEN: '${GITHUB_TOKEN}'};
                 break;
               case '@patruff/server-flux':
                 tools = [
@@ -133,7 +130,6 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'flux/editImage', description: 'Edit an existing image with text prompts'},
                 ];
                 capabilities = ['image_generation'];
-                env = {FLUX_API_KEY: '${FLUX_API_KEY}'};
                 break;
               case '@patruff/server-gmail-drive':
                 tools = [
@@ -144,7 +140,6 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'drive/uploadFile', description: 'Upload a file to Google Drive'},
                 ];
                 capabilities = ['gmail', 'drive'];
-                env = {GOOGLE_API_CREDENTIALS: '${GOOGLE_API_CREDENTIALS}'};
                 break;
               case '@abhiz123/todoist-mcp-server':
                 tools = [
@@ -155,7 +150,6 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'todoist/completeTask', description: 'Mark a task as complete'},
                 ];
                 capabilities = ['todoist'];
-                env = {TODOIST_API_KEY: '${TODOIST_API_KEY}'};
                 break;
               case '@patruff/server-lightrag':
                 tools = [
@@ -266,7 +260,6 @@ const AgentMakerPage: React.FC = () => {
                 {name: 'brave/localsearch', description: 'Search for local businesses and places'},
               ];
               capabilities = ['search'];
-              env = {BRAVE_API_KEY: '${BRAVE_API_KEY}'};
               break;
             case '@modelcontextprotocol/server-github':
               tools = [
@@ -278,7 +271,6 @@ const AgentMakerPage: React.FC = () => {
                 {name: 'github/createPullRequest', description: 'Create a new pull request'},
               ];
               capabilities = ['github'];
-              env = {GITHUB_TOKEN: '${GITHUB_TOKEN}'};
               break;
             case '@patruff/server-terminator':
               tools = [
@@ -286,7 +278,6 @@ const AgentMakerPage: React.FC = () => {
                 {name: 'terminator/terminateRemoteFile', description: 'Permanently delete a file from a GitHub repository'},
               ];
               capabilities = ['terminator'];
-              env = {GITHUB_TOKEN: '${GITHUB_TOKEN}'};
               break;
             case '@patruff/server-flux':
               tools = [
@@ -294,7 +285,6 @@ const AgentMakerPage: React.FC = () => {
                 {name: 'flux/editImage', description: 'Edit an existing image with text prompts'},
               ];
               capabilities = ['image_generation'];
-              env = {FLUX_API_KEY: '${FLUX_API_KEY}'};
               break;
             case '@patruff/server-gmail-drive':
               tools = [
@@ -305,7 +295,6 @@ const AgentMakerPage: React.FC = () => {
                 {name: 'drive/uploadFile', description: 'Upload a file to Google Drive'},
               ];
               capabilities = ['gmail', 'drive'];
-              env = {GOOGLE_API_CREDENTIALS: '${GOOGLE_API_CREDENTIALS}'};
               break;
             case '@abhiz123/todoist-mcp-server':
               tools = [
@@ -316,7 +305,6 @@ const AgentMakerPage: React.FC = () => {
                 {name: 'todoist/completeTask', description: 'Mark a task as complete'},
               ];
               capabilities = ['todoist'];
-              env = {TODOIST_API_KEY: '${TODOIST_API_KEY}'};
               break;
             case '@patruff/server-lightrag':
               tools = [
@@ -330,7 +318,7 @@ const AgentMakerPage: React.FC = () => {
               tools = [
                 {name: 'codesnip/editSnippet', description: 'Edit a specific code snippet in a file'},
                 {name: 'codesnip/findSnippets', description: 'Find code snippets matching a pattern'},
-              ];
+                ];
               capabilities = ['code_editing'];
               break;
             default:
@@ -383,6 +371,19 @@ const AgentMakerPage: React.FC = () => {
     'Dragonborn',
     'Tiefling',
     'Orc',
+  ];
+
+  const dndNpcs = [
+    'Bartender',
+    'Old Man',
+    'Woman in Distress',
+    'Blacksmith',
+    'Traveling Merchant',
+    'Town Guard',
+    'Wise Hermit',
+    'Noble',
+    'Jester',
+    'Acolyte',
   ];
 
   const getSkillDetails = () => {
@@ -453,7 +454,12 @@ const AgentMakerPage: React.FC = () => {
   React.useEffect(() => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
-    } else {
+      setAgentDescription('Calculation, Memory, Scheduling');
+    } else if (agentType === 'NPC') {
+      setAgentIcon('👤');
+      setAgentDescription('Generic NPC Description');
+    }
+    else {
       const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
       if (selectedClassDetails) {
         setAgentIcon(selectedClassDetails.icon);
@@ -486,6 +492,10 @@ const AgentMakerPage: React.FC = () => {
                 setAgentType(value);
                 if (value === 'service') {
                   setAgentIcon('🤖');
+                  setAgentDescription('Calculation, Memory, Scheduling');
+                } else if (value === 'NPC') {
+                  setAgentIcon('👤');
+                  setAgentDescription('Generic NPC Description');
                 }
               }}>
                 <SelectTrigger id="agent-type">
@@ -510,7 +520,7 @@ const AgentMakerPage: React.FC = () => {
                 placeholder="Enter agent URL"
               />
             </div>
-            {agentType !== 'service' && (
+            {(agentType === 'character') && (
               <div>
                 <Label htmlFor="agent-icon">Agent Class</Label>
                 <Select onValueChange={(value) => {
@@ -533,9 +543,30 @@ const AgentMakerPage: React.FC = () => {
                 </Select>
               </div>
             )}
+            {(agentType === 'NPC') && (
+              <div>
+                <Label htmlFor="agent-icon">Agent NPC</Label>
+                <Select onValueChange={(value) => {
+                  setAgentName(value);
+                  setAgentDescription(`Generic ${value} NPC Description`);
+                  setAgentIcon('👤');
+                }} value={agentName}>
+                  <SelectTrigger id="agent-npc">
+                    <SelectValue placeholder="Select agent NPC"/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dndNpcs.map((npc) => (
+                      <SelectItem key={npc} value={npc}>
+                        👤 {npc}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {agentType !== 'service' && (
+            {(agentType === 'character') && (
               <div>
                 <Label htmlFor="agent-race">Agent Race</Label>
                 <Select onValueChange={(value) => setSelectedRace(value)}>
