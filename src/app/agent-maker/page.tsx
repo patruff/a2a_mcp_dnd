@@ -26,14 +26,15 @@ const AgentMakerPage: React.FC = () => {
   const [selectedRace, setSelectedRace] = React.useState<string>('human');
   const [selectedAlignment, setSelectedAlignment] = React.useState<string>('neutral good');
   const [selectedGender, setSelectedGender] = React.useState<string>('male');
-
-  const [strength, setStrength] = useState<number>(10);
+    const [strength, setStrength] = useState<number>(10);
   const [dexterity, setDexterity] = useState<number>(10);
   const [constitution, setConstitution] = useState<number>(10);
   const [intelligence, setIntelligence] = useState<number>(10);
   const [wisdom, setWisdom] = useState<number>(10);
   const [charisma, setCharisma] = useState<number>(10);
-    const [initialAction, setInitialAction] = useState<string>('');
+  const [initialAction, setInitialAction] = useState<string>('');
+  const [selectedPersonality, setSelectedPersonality] = useState<string>('stoic');
+  const [selectedSpeechStyle, setSelectedSpeechStyle] = useState<string>('formal');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -193,8 +194,8 @@ const AgentMakerPage: React.FC = () => {
         race: selectedRace,
         class: selectedClass,
         level: 1,
-        personality: '',
-        speech_style: '',
+        personality: selectedPersonality,
+        speech_style: selectedSpeechStyle,
         description: agentDescription,
         port: 41249,
         initial_action: initialAction,
@@ -481,6 +482,26 @@ const AgentMakerPage: React.FC = () => {
       'male',
       'female',
       'other',
+  ];
+
+  const personalities = [
+    'stoic',
+    'cheerful',
+    'brooding',
+    'witty',
+    'pessimistic',
+    'optimistic',
+    'reserved',
+  ];
+
+  const speechStyles = [
+    'formal',
+    'informal',
+    'poetic',
+    'blunt',
+    'verbose',
+    'laconic',
+    'musical',
   ];
 
   React.useEffect(() => {
@@ -775,6 +796,36 @@ const AgentMakerPage: React.FC = () => {
                     onChange={(e) => setInitialAction(e.target.value)}
                     placeholder="Describe the initial action"
                 />
+            </div>
+            <div>
+              <Label htmlFor="agent-personality">Agent Personality</Label>
+              <Select onValueChange={(value) => setSelectedPersonality(value)} value={selectedPersonality}>
+                <SelectTrigger id="agent-personality">
+                  <SelectValue placeholder="Select agent personality"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {personalities.map((personality) => (
+                    <SelectItem key={personality} value={personality}>
+                      {personality}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="agent-speech-style">Agent Speech Style</Label>
+              <Select onValueChange={(value) => setSelectedSpeechStyle(value)} value={selectedSpeechStyle}>
+                <SelectTrigger id="agent-speech-style">
+                  <SelectValue placeholder="Select agent speech style"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {speechStyles.map((style) => (
+                    <SelectItem key={style} value={style}>
+                      {style}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
           <div>
