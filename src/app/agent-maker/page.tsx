@@ -9,6 +9,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {Button} from '@/components/ui/button';
 import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
+import { Checkbox } from "@/components/ui/checkbox"
 
 const AgentMakerPage: React.FC = () => {
   const [agentName, setAgentName] = React.useState('DefaultAgentName');
