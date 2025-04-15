@@ -407,24 +407,6 @@ const AgentMakerPage: React.FC = () => {
           </div>
 
           <div>
-            <Label htmlFor="skill">Skill</Label>
-            <Select onValueChange={(value) => setSelectedClass(value)}>
-              <SelectTrigger id="skill">
-                <SelectValue placeholder="Select agent skill"/>
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(getSkillDetails)
-                  .filter(([key]) => key !== 'default')
-                  .map(([key, skill]: [string, any]) => (
-                    <SelectItem key={key} value={key}>
-                      {skill.name}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
             <Label>Select MCPs</Label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               {availableMcps.map((mcp) => (
