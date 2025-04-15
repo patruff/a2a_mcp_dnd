@@ -1,66 +1,31 @@
 'use client';
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import './TavernMap.css'; // We'll define styles here
 
-// Tavern Map Description with Objects and Character Positions
-const tavernMap = {
-  dimensions: {
-    width: 24, // grid squares across (each 5 feet)
-    height: 18, // grid squares down
-    squareSize: 5, // feet per square
-  },
+const TavernMap = () => {
+  // State for character positions and movement
+  const [characters, setCharacters] = useState({
+    gnomeThief: {position: [12, 15], facing: 'north', type: 'gnome'},
+    bartender: {position: [8, 1], facing: 'south', type: 'human'},
+    wizard: {position: [17, 7], facing: 'south', type: 'human'},
+  });
 
-  // Basic environment elements
-  environment: {
-    floorType: 'stone',
-    wallType: 'stone',
-    lighting: 'dim', // due to smokiness
-    visibility: 6, // squares of clear visibility (30 feet)
-    ambience: 'smoky',
-    torches: [
-      // Positions of wall torches [x, y]
-      [0, 3],
-      [0, 9],
-      [0, 15],
-      [6, 0],
-      [12, 0],
-      [18, 0],
-      [23, 3],
-      [23, 9],
-      [23, 15],
-      [6, 17],
-      [12, 17],
-      [18, 17],
-    ],
-  },
+  // Map configuration
+  const mapConfig = {
+    width: 24,
+    height: 18,
+    cellSize: 30, // pixels per cell
+  };
 
-  // Large fixtures
-  fixtures: {
-    bar: {
-      type: 'counter',
-      position: [3, 1],
-      width: 15,
-      height: 1,
-      direction: 'horizontal',
-    },
+  // Furniture and fixtures data
+  const furniture = {
+    bar: {position: [3, 1], width: 15, height: 1},
     barrels: [
-      {position: [2, 2], size: 1},
-      {position: [3, 2], size: 1},
-      {position: [4, 2], size: 1},
+      {position: [2, 2]},
+      {position: [3, 2]},
+      {position: [4, 2]},
     ],
-    cauldron: {position: [1, 1], size: 1},
-    piano: {position: [21, 2], width: 2, height: 1},
-    bearskinRug: {position: [12, 8], width: 2, height: 3},
-    entranceCarpet: {position: [12, 16], width: 1, height: 2, color: 'red'},
-    entrancePlants: [
-      {position: [11, 16], size: 1},
-      {position: [13, 16], size: 1},
-    ],
-  },
-
-  // Tables and seating
-  furniture: {
-    // Rectangular tables (2x1 squares)
     rectangularTables: [
       {position: [5, 9], orientation: 'horizontal'},
       {position: [5, 12], orientation: 'horizontal'},
@@ -69,248 +34,281 @@ const tavernMap = {
       {position: [13, 9], orientation: 'horizontal'},
       {position: [13, 12], orientation: 'horizontal'},
     ],
-    // Round tables (1 square)
     roundTables: [
-      {position: [17, 7], radius: 1},
-      {position: [17, 10], radius: 1},
-      {position: [17, 13], radius: 1},
+      {position: [17, 7]},
+      {position: [17, 10]},
+      {position: [17, 13]},
     ],
-    // Chairs (positions around tables)
-    chairs: [
-      // Bar stools
-      {position: [5, 2], facing: 'north'},
-      {position: [7, 2], facing: 'north'},
-      {position: [9, 2], facing: 'north'},
-      {position: [11, 2], facing: 'north'},
-      {position: [13, 2], facing: 'north'},
-      {position: [15, 2], facing: 'north'},
+    bearskinRug: {position: [12, 8], width: 2, height: 3},
+    cauldron: {position: [1, 1]},
+    piano: {position: [21, 2], width: 2, height: 1},
+    entranceCarpet: {position: [12, 16], width: 1, height: 2},
+  };
 
-      // Chairs for rectangular tables
-      {position: [4, 9], facing: 'east'},
-      {position: [6, 9], facing: 'west'},
-      {position: [4, 12], facing: 'east'},
-      {position: [6, 12], facing: 'west'},
+  // Create the grid cells
+  const renderGrid = () => {
+    const cells = [];
+    for (let y = 0; y < mapConfig.height; y++) {
+      for (let x = 0; x < mapConfig.width; x++) {
+        cells.push(
+          <div
+            key={`cell-${x}-${y}`}
+            className="grid-cell"
+            style={{
+              left: x * mapConfig.cellSize,
+              top: y * mapConfig.cellSize,
+              width: mapConfig.cellSize,
+              height: mapConfig.cellSize,
+            }}
+          />
+        );
+      }
+    }
+    return cells;
+  };
 
-      {position: [8, 9], facing: 'east'},
-      {position: [10, 9], facing: 'west'},
-      {position: [8, 12], facing: 'east'},
-      {position: [10, 12], facing: 'west'},
+  // Render furniture
+  const renderFurniture = () => {
+    const items = [];
 
-      {position: [12, 9], facing: 'east'},
-      {position: [14, 9], facing: 'west'},
-      {position: [12, 12], facing: 'east'},
-      {position: [14, 12], facing: 'west'},
-
-      // Chairs for round tables (4 per table)
-      {position: [16, 7], facing: 'east'},
-      {position: [18, 7], facing: 'west'},
-      {position: [17, 6], facing: 'south'},
-      {position: [17, 8], facing: 'north'},
-
-      {position: [16, 10], facing: 'east'},
-      {position: [18, 10], facing: 'west'},
-      {position: [17, 9], facing: 'south'},
-      {position: [17, 11], facing: 'north'},
-
-      {position: [16, 13], facing: 'east'},
-      {position: [18, 13], facing: 'west'},
-      {position: [17, 12], facing: 'south'},
-      {position: [17, 14], facing: 'north'},
-    ],
-    specialSeat: {position: [20, 4], facing: 'west'},
-  },
-
-  // Character starting positions
-  characters: {
-    bartender: {
-      position: [8, 1],
-      facing: 'south',
-      race: 'human',
-      description: 'Wiping glasses behind the bar counter',
-    },
-    gnomeThief: {
-      position: [12, 15],
-      facing: 'north',
-      race: 'gnome',
-      height: 3, // feet
-      movementSpeed: 25, // feet per round (5 squares)
-      description: 'Just entered the tavern, partially obscured by smoke',
-    },
-    wizard: {
-      position: [17, 7],
-      facing: 'south',
-      race: 'human',
-      description: 'Sitting at the easternmost round table, nursing a drink',
-    },
-    // Add random patrons for atmosphere
-    patrons: [
-      {position: [5, 9], type: 'dwarf', activity: 'drinking'},
-      {position: [13, 12], type: 'human', activity: 'eating'},
-      {position: [9, 2], type: 'half-elf', activity: 'talking'},
-      {position: [17, 13], type: 'halfling', activity: 'gambling'},
-    ],
-  },
-
-  // Interactive objects or points of interest
-  interactiveElements: {
-    secretDoor: {position: [0, 5], visible: false, requiresCheck: 'perception'},
-    suspiciousPatron: {position: [14, 9], description: 'Watching the entrance carefully'},
-    droppedPurse: {position: [10, 14], visible: true, requiresCheck: 'investigation'},
-  },
-};
-
-const TavernGrid = ({children}: {children: React.ReactNode}) => (
-  <div
-    className="tavern-grid"
-    style={{
-      display: 'grid',
-      gridTemplateColumns: `repeat(${tavernMap.dimensions.width}, 1fr)`,
-      gridTemplateRows: `repeat(${tavernMap.dimensions.height}, 1fr)`,
-      width: 'calc(50px * 24)',
-      height: 'calc(50px * 18)',
-      background: '#826d5c', // stone floor color
-      border: '1px solid black',
-      position: 'relative',
-      overflow: 'hidden',
-    }}
-  >
-    {children}
-  </div>
-);
-
-const Table = ({position, size, type}: {position: number[]; size: any; type: string}) => {
-  const [x, y] = position;
-  return (
-    <div
-      className={`table ${type}`}
-      style={{
-        gridColumn: `${x + 1} / span ${size.width || 1}`,
-        gridRow: `${y + 1} / span ${size.height || 1}`,
-        background: '#5e4b38', // wooden color
-        borderRadius: type === 'round' ? '50%' : '4px',
-        border: '2px solid #3d3023',
-      }}
-    />
-  );
-};
-
-const SmokeEffect = ({visibility}: {visibility: number}) => (
-  <div
-    className="smoke-layer"
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background:
-        'radial-gradient(circle at center, transparent 0%, rgba(120, 120, 120, 0.3) 40%, rgba(80, 80, 80, 0.7) 80%)',
-      pointerEvents: 'none',
-      zIndex: 10,
-    }}
-  >
-    {/* Add animated smoke particles here */}
-  </div>
-);
-
-const Character = ({data}: {data: any}) => {
-  const [x, y] = data.position;
-  return (
-    <div
-      className={`character ${data.race} ${data.type || ''}`}
-      style={{
-        gridColumn: x + 1,
-        gridRow: y + 1,
-        zIndex: 5,
-        width: '80%',
-        height: '80%',
-        margin: '10%',
-        background:
-          data.race === 'gnome'
-            ? '#8B6D9C'
-            : data.race === 'human'
-            ? '#D2B48C'
-            : data.race === 'dwarf'
-            ? '#A67153'
-            : '#92A67A',
-        borderRadius: '50%',
-        position: 'relative',
-        boxShadow: '0 0 0 2px black',
-      }}
-    >
-      {/* Direction indicator */}
+    // Bar counter
+    items.push(
       <div
-        className="facing"
+        key="bar"
+        className="furniture bar"
         style={{
-          position: 'absolute',
-          width: '40%',
-          height: '40%',
-          background: 'white',
-          borderRadius: '50%',
-          top:
-            data.facing === 'north'
-              ? '5%'
-              : data.facing === 'south'
-              ? '55%'
-              : '30%',
-          left:
-            data.facing === 'west'
-              ? '5%'
-              : data.facing === 'east'
-              ? '55%'
-              : '30%',
+          left: furniture.bar.position[0] * mapConfig.cellSize,
+          top: furniture.bar.position[1] * mapConfig.cellSize,
+          width: furniture.bar.width * mapConfig.cellSize,
+          height: furniture.bar.height * mapConfig.cellSize,
         }}
       />
-    </div>
-  );
-};
+    );
 
-const TavernPage: React.FC = () => {
-  return (
-    <div className="container mx-auto py-10">
-      <TavernGrid>
-        {/* Stone floor effect */}
-        {[...Array(tavernMap.dimensions.width * tavernMap.dimensions.height)].map((_, i) => (
-          <div key={i} style={{border: '1px solid rgba(0,0,0,0.1)'}} />
-        ))}
-
-        {/* Northern Wall */}
+    // Barrels
+    furniture.barrels.forEach((barrel, i) => {
+      items.push(
         <div
+          key={`barrel-${i}`}
+          className="furniture barrel"
           style={{
-            backgroundColor: '#544e31',
-            gridColumn: '1 / span 24',
-            gridRow: '1 / span 1',
-            zIndex: 2,
+            left: barrel.position[0] * mapConfig.cellSize,
+            top: barrel.position[1] * mapConfig.cellSize,
+            width: mapConfig.cellSize,
+            height: mapConfig.cellSize,
           }}
         />
-        {/* Render fixtures */}
-        <Table position={tavernMap.fixtures.bar.position} size={{width: tavernMap.fixtures.bar.width, height: tavernMap.fixtures.bar.height}} type="bar" />
-        {tavernMap.fixtures.barrels.map((barrel, index) => (
-          <Table key={index} position={barrel.position} size={{width: barrel.size, height: barrel.size}} type="barrel" />
-        ))}
-        <Table position={tavernMap.fixtures.piano.position} size={{width: tavernMap.fixtures.piano.width, height: tavernMap.fixtures.piano.height}} type="piano" />
-        
-        {/* Render characters */}
-        {Object.entries(tavernMap.characters).map(([key, character]) => {
-          if (key !== 'patrons') {
-            return <Character key={key} data={character} />;
-          }
-          return null;
-        })}
+      );
+    });
 
-        {/* Render patrons */}
-        {tavernMap.characters.patrons && tavernMap.characters.patrons.map((patron, index) => (
-          <Character key={`patron-${index}`} data={patron} />
-        ))}
+    // Rectangular tables
+    furniture.rectangularTables.forEach((table, i) => {
+      items.push(
+        <div
+          key={`rect-table-${i}`}
+          className="furniture rectangular-table"
+          style={{
+            left: table.position[0] * mapConfig.cellSize,
+            top: table.position[1] * mapConfig.cellSize,
+            width: (table.orientation === 'horizontal' ? 2 : 1) * mapConfig.cellSize,
+            height: (table.orientation === 'vertical' ? 2 : 1) * mapConfig.cellSize,
+          }}
+        >
+          <div className="table-surface"/>
+        </div>
+      );
+    });
 
-        {/* Smoke effect */}
-        <SmokeEffect visibility={tavernMap.environment.visibility} />
-      </TavernGrid>
-      <p className="text-sm text-gray-500 mt-4">
-        A detailed representation of the Smoky Tavern using CSS Grid.
-      </p>
+    // Round tables
+    furniture.roundTables.forEach((table, i) => {
+      items.push(
+        <div
+          key={`round-table-${i}`}
+          className="furniture round-table"
+          style={{
+            left: table.position[0] * mapConfig.cellSize,
+            top: table.position[1] * mapConfig.cellSize,
+            width: mapConfig.cellSize,
+            height: mapConfig.cellSize,
+          }}
+        />
+      );
+    });
+
+    // Bearskin rug
+    items.push(
+      <div
+        key="bearskin"
+        className="furniture bearskin-rug"
+        style={{
+          left: furniture.bearskinRug.position[0] * mapConfig.cellSize,
+          top: furniture.bearskinRug.position[1] * mapConfig.cellSize,
+          width: furniture.bearskinRug.width * mapConfig.cellSize,
+          height: furniture.bearskinRug.height * mapConfig.cellSize,
+        }}
+      />
+    );
+
+    // Piano
+    items.push(
+      <div
+        key="piano"
+        className="furniture piano"
+        style={{
+          left: furniture.piano.position[0] * mapConfig.cellSize,
+          top: furniture.piano.position[1] * mapConfig.cellSize,
+          width: furniture.piano.width * mapConfig.cellSize,
+          height: furniture.piano.height * mapConfig.cellSize,
+        }}
+      />
+    );
+
+    // Cauldron
+    items.push(
+      <div
+        key="cauldron"
+        className="furniture cauldron"
+        style={{
+          left: furniture.cauldron.position[0] * mapConfig.cellSize,
+          top: furniture.cauldron.position[1] * mapConfig.cellSize,
+          width: mapConfig.cellSize,
+          height: mapConfig.cellSize,
+        }}
+      />
+    );
+
+    // Entrance carpet
+    items.push(
+      <div
+        key="entrance-carpet"
+        className="furniture entrance-carpet"
+        style={{
+          left: furniture.entranceCarpet.position[0] * mapConfig.cellSize,
+          top: furniture.entranceCarpet.position[1] * mapConfig.cellSize,
+          width: furniture.entranceCarpet.width * mapConfig.cellSize,
+          height: furniture.entranceCarpet.height * mapConfig.cellSize,
+        }}
+      />
+    );
+
+    return items;
+  };
+
+  // Render characters
+  const renderCharacters = () => {
+    return Object.entries(characters).map(([id, char]) => (
+      <div
+        key={id}
+        className={`character ${char.type}`}
+        style={{
+          left: char.position[0] * mapConfig.cellSize + mapConfig.cellSize * 0.1,
+          top: char.position[1] * mapConfig.cellSize + mapConfig.cellSize * 0.1,
+          width: mapConfig.cellSize * 0.8,
+          height: mapConfig.cellSize * 0.8,
+        }}
+      >
+        <div className={`facing ${char.facing}`} />
+      </div>
+    ));
+  };
+
+  // Render smoke effect
+  const renderSmoke = () => {
+    return (
+      <div className="smoke-overlay">
+        <div className="smoke-particle-container">
+          {Array(20).fill().map((_, i) => (
+            <div key={`smoke-${i}`} className="smoke-particle" style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: 0.1 + Math.random() * 0.3,
+            }} />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Handle character movement
+  const moveCharacter = (id, direction) => {
+    setCharacters(prev => {
+      const char = {...prev[id]};
+      const [x, y] = char.position;
+
+      // Update facing
+      char.facing = direction;
+
+      // Calculate new position based on direction
+      if (direction === 'north' && y > 0) char.position = [x, y - 1];
+      if (direction === 'south' && y < mapConfig.height - 1) char.position = [x, y + 1];
+      if (direction === 'west' && x > 0) char.position = [x - 1, y];
+      if (direction === 'east' && x < mapConfig.width - 1) char.position = [x + 1, y];
+
+      return {...prev, [id]: char};
+    });
+  };
+
+  // Add wall torches for lighting
+  const renderTorches = () => {
+    const torchPositions = [
+      [0, 3], [0, 9], [0, 15],
+      [6, 0], [12, 0], [18, 0],
+      [23, 3], [23, 9], [23, 15],
+      [6, 17], [12, 17], [18, 17],
+    ];
+
+    return torchPositions.map((pos, i) => (
+      <div
+        key={`torch-${i}`}
+        className="torch"
+        style={{
+          left: pos[0] * mapConfig.cellSize,
+          top: pos[1] * mapConfig.cellSize,
+        }}
+      >
+        <div className="flame" />
+      </div>
+    ));
+  };
+
+  return (
+    <div className="tavern-map-container">
+      <div
+        className="tavern-map"
+        style={{
+          width: mapConfig.width * mapConfig.cellSize,
+          height: mapConfig.height * mapConfig.cellSize,
+        }}
+      >
+        <div className="tavern-floor" />
+        <div className="grid-container">
+          {renderGrid()}
+        </div>
+        <div className="furniture-container">
+          {renderFurniture()}
+        </div>
+        <div className="torch-container">
+          {renderTorches()}
+        </div>
+        <div className="character-container">
+          {renderCharacters()}
+        </div>
+        {renderSmoke()}
+      </div>
+
+      {/* Simple controls for testing */}
+      <div className="controls">
+        <h3>Move Gnome Thief</h3>
+        <div className="direction-buttons">
+          <button onClick={() => moveCharacter('gnomeThief', 'north')}>North</button>
+          <button onClick={() => moveCharacter('gnomeThief', 'south')}>South</button>
+          <button onClick={() => moveCharacter('gnomeThief', 'west')}>West</button>
+          <button onClick={() => moveCharacter('gnomeThief', 'east')}>East</button>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default TavernPage;
+export default TavernMap;
