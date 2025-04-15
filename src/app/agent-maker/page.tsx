@@ -16,7 +16,7 @@ const AgentMakerPage: React.FC = () => {
   const [agentType, setAgentType] = React.useState('service');
   const [agentDescription, setAgentDescription] = React.useState('Default agent description.');
   const [agentUrl, setAgentUrl] = React.useState('http://localhost:41250');
-  const [agentIcon, setAgentIcon] = React.useState('🧙‍♂️');
+  const [agentIcon, setAgentIcon] = React.useState('🤖');
   const [agentThemeColor, setAgentThemeColor] = React.useState('#4285F4');
   const [selectedMcps, setSelectedMcps] = React.useState<string[]>([]);
   const [isGenerating, setIsGenerating] = React.useState(false);
@@ -68,7 +68,7 @@ const AgentMakerPage: React.FC = () => {
         },
         authentication: null,
         skills: [
-          getSkillDetails(selectedClass),
+          getSkillDetails(),
         ],
         metadata: {
           icon: agentIcon,
@@ -229,7 +229,7 @@ const AgentMakerPage: React.FC = () => {
       },
       authentication: null,
       skills: [
-        getSkillDetails(selectedClass),
+        getSkillDetails(),
       ],
       metadata: {
         icon: agentIcon,
@@ -385,7 +385,18 @@ const AgentMakerPage: React.FC = () => {
     'Orc',
   ];
 
-  const getSkillDetails = (skillId: string) => {
+  const getSkillDetails = () => {
+    let skillId;
+    if (agentType === 'service') {
+      return {
+        id: 'service',
+        name: 'Service',
+        description: 'Calculation, Memory, Scheduling',
+        tags: ['service'],
+      };
+    } else {
+      skillId = selectedClass;
+    }
     const skillOptions = {
       wizard: {
         id: 'magic',
@@ -423,6 +434,12 @@ const AgentMakerPage: React.FC = () => {
         description: 'Wields powerful elemental magic.',
         tags: ['magic', 'elements'],
       },
+      service: {
+        id: 'service',
+        name: 'Service',
+        description: 'Calculation, Memory, Scheduling',
+        tags: ['service'],
+      },
       default: {
         id: 'default',
         name: 'Default Skill',
@@ -434,11 +451,15 @@ const AgentMakerPage: React.FC = () => {
   };
 
   React.useEffect(() => {
-    const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
-    if (selectedClassDetails) {
-      setAgentIcon(selectedClassDetails.icon);
+    if (agentType === 'service') {
+      setAgentIcon('🤖');
+    } else {
+      const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
+      if (selectedClassDetails) {
+        setAgentIcon(selectedClassDetails.icon);
+      }
     }
-  }, [selectedClass]);
+  }, [selectedClass, agentType]);
 
   return (
     <div className="container mx-auto py-10">
@@ -461,7 +482,12 @@ const AgentMakerPage: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="agent-type">Agent Type</Label>
-              <Select onValueChange={(value) => setAgentType(value)}>
+              <Select onValueChange={(value) => {
+                setAgentType(value);
+                if (value === 'service') {
+                  setAgentIcon('🤖');
+                }
+              }}>
                 <SelectTrigger id="agent-type">
                   <SelectValue placeholder="Select agent type"/>
                 </SelectTrigger>
