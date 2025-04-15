@@ -9,7 +9,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {Button} from '@/components/ui/button';
 import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
-import {Checkbox} from "@/components/ui/checkbox"
+import {Checkbox} from "@/components/ui/checkbox";
 
 const AgentMakerPage: React.FC = () => {
   const [agentName, setAgentName] = React.useState('DefaultAgentName');
@@ -24,6 +24,7 @@ const AgentMakerPage: React.FC = () => {
   const [selectedModel, setSelectedModel] = React.useState<string>('gemini-2-flash');
   const [selectedClass, setSelectedClass] = React.useState<string>('wizard');
   const [selectedRace, setSelectedRace] = React.useState<string>('human');
+  const [selectedAlignment, setSelectedAlignment] = React.useState<string>('neutral');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -372,19 +373,6 @@ const AgentMakerPage: React.FC = () => {
     'Orc',
   ];
 
-  const dndNpcs = [
-    'Bartender',
-    'Old Man',
-    'Woman in Distress',
-    'Blacksmith',
-    'Traveling Merchant',
-    'Town Guard',
-    'Wise Hermit',
-    'Noble',
-    'Jester',
-    'Acolyte',
-  ];
-
     const getSkillDetails = () => {
         let skillId;
         let language;
@@ -398,99 +386,6 @@ const AgentMakerPage: React.FC = () => {
                 language: 'N/A', // Services don't typically have a language
                 racialTraits: [], // Services don't have racial traits
             };
-        } else if (agentType === 'NPC') {
-            // Define skill sets for various NPCs
-            const npcSkills = {
-                Bartender: {
-                    id: 'bartending',
-                    name: 'Bartending',
-                    description: 'Mixing drinks and managing the bar',
-                    tags: ['service', 'bar', 'drinks'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                'Old Man': {
-                    id: 'wisdom',
-                    name: 'Wisdom',
-                    description: 'Providing advice and guidance',
-                    tags: ['knowledge', 'advice'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                'Woman in Distress': {
-                    id: 'deception',
-                    name: 'Deception',
-                    description: 'Appearing vulnerable to gain assistance',
-                    tags: ['acting', 'vulnerability'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                Blacksmith: {
-                    id: 'blacksmithing',
-                    name: 'Blacksmithing',
-                    description: 'Crafting metal items',
-                    tags: ['crafting', 'metalwork'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                'Traveling Merchant': {
-                    id: 'trading',
-                    name: 'Trading',
-                    description: 'Buying and selling goods',
-                    tags: ['commerce', 'negotiation'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                'Town Guard': {
-                    id: 'guarding',
-                    name: 'Guarding',
-                    description: 'Protecting the town and enforcing laws',
-                    tags: ['security', 'law'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                'Wise Hermit': {
-                    id: 'herbalism',
-                    name: 'Herbalism',
-                    description: 'Knowledge of plants and their uses',
-                    tags: ['nature', 'medicine'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                Noble: {
-                    id: 'diplomacy',
-                    name: 'Diplomacy',
-                    description: 'Negotiating and managing social situations',
-                    tags: ['politics', 'social'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                Jester: {
-                    id: 'performance',
-                    name: 'Performance',
-                    description: 'Entertaining and distracting with humor',
-                    tags: ['entertainment', 'humor'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-                Acolyte: {
-                    id: 'healing',
-                    name: 'Healing',
-                    description: 'Providing religious and medical aid',
-                    tags: ['religion', 'medicine'],
-                    language: 'Common',
-                    racialTraits: [],
-                },
-            };
-            const npcSkill = npcSkills[agentName] || {
-                id: 'default',
-                name: 'Default Skill',
-                description: 'A default skill with no specific capabilities.',
-                tags: ['default'],
-                language: 'Common',
-                racialTraits: [],
-            };
-            return npcSkill;
         }
         else {
             skillId = selectedClass;
@@ -598,6 +493,12 @@ const AgentMakerPage: React.FC = () => {
         return skillOptions[skillId] || skillOptions.default;
     };
 
+  const dndAlignments = [
+    'lawful good', 'neutral good', 'chaotic good',
+    'lawful neutral', 'neutral', 'chaotic neutral',
+    'lawful evil', 'neutral evil', 'chaotic evil',
+  ];
+
   React.useEffect(() => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
@@ -613,6 +514,19 @@ const AgentMakerPage: React.FC = () => {
       }
     }
   }, [selectedClass, agentType, agentName]);
+
+  const themeColors = [
+    '#4285F4', // Blue
+    '#34A853', // Green
+    '#FBBC05', // Yellow
+    '#EA4335', // Red
+    '#9C27B0', // Purple
+    '#E67C26', // Orange
+    '#00BCD4', // Cyan
+    '#03A9F4', // Light Blue
+    '#795548', // Brown
+    '#607D8B', // Blue Grey
+  ];
 
   return (
     <div className="container mx-auto py-10">
@@ -730,6 +644,23 @@ const AgentMakerPage: React.FC = () => {
                 </Select>
               </div>
             )}
+              {(agentType === 'character') && (
+                  <div>
+                      <Label htmlFor="agent-alignment">Agent Alignment</Label>
+                      <Select onValueChange={(value) => setSelectedAlignment(value)} value={selectedAlignment}>
+                          <SelectTrigger id="agent-alignment">
+                              <SelectValue placeholder="Select agent alignment"/>
+                          </SelectTrigger>
+                          <SelectContent>
+                              {dndAlignments.map((alignment) => (
+                                  <SelectItem key={alignment} value={alignment}>
+                                      {alignment}
+                                  </SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+                  </div>
+              )}
             <div>
                 <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
                 <Input
