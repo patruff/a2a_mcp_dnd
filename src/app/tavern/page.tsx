@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState, useEffect} from 'react';
-import './TavernMap.css'; // We'll define styles here
+//import './TavernMap.css'; // We'll define styles here
 
 const TavernMap = () => {
   // State for character positions and movement
