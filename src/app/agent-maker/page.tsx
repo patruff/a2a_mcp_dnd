@@ -25,6 +25,7 @@ const AgentMakerPage: React.FC = () => {
   const [selectedClass, setSelectedClass] = React.useState<string>('wizard');
   const [selectedRace, setSelectedRace] = React.useState<string>('human');
   const [selectedAlignment, setSelectedAlignment] = React.useState<string>('neutral');
+    const [selectedGender, setSelectedGender] = React.useState<string>('male');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -481,6 +482,70 @@ const AgentMakerPage: React.FC = () => {
                 language: 'N/A',
                 racialTraits: [],
             },
+              blacksmith: {
+                  id: 'blacksmithing',
+                  name: 'Blacksmithing',
+                  description: 'Crafts and repairs metal items.',
+                  tags: ['crafting', 'metalworking'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              innkeeper: {
+                  id: 'innkeeping',
+                  name: 'Innkeeping',
+                  description: 'Manages and serves customers at an inn.',
+                  tags: ['service', 'hospitality'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              merchant: {
+                  id: 'trading',
+                  name: 'Trading',
+                  description: 'Buys and sells goods for profit.',
+                  tags: ['commerce', 'negotiation'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              guard: {
+                  id: 'guarding',
+                  name: 'Guarding',
+                  description: 'Protects and patrols areas.',
+                  tags: ['protection', 'security'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              noble: {
+                  id: 'nobility',
+                  name: 'Nobility',
+                  description: 'Commands respect and manages estates.',
+                  tags: ['leadership', 'management'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              mystic: {
+                  id: 'divination',
+                  name: 'Divination',
+                  description: 'Foretells the future and provides guidance.',
+                  tags: ['magic', 'guidance'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              beggar: {
+                  id: 'begging',
+                  name: 'Begging',
+                  description: 'Solicits for alms and survival.',
+                  tags: ['survival', 'streetwise'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
+              distress: {
+                  id: 'aid',
+                  name: 'Aid',
+                  description: 'Solicits help from others and requires help.',
+                  tags: ['survival', 'reliance'],
+                  language: language,
+                  racialTraits: racialTraits,
+              },
             default: {
                 id: 'default',
                 name: 'Default Skill',
@@ -512,13 +577,35 @@ const AgentMakerPage: React.FC = () => {
     'Mystic'
   ];
 
+    const npcSkills = {
+        'Bartender': 'innkeeping',
+        'Blacksmith': 'blacksmithing',
+        'Old Man': 'aid',
+        'Woman in Distress': 'aid',
+        'Merchant': 'trading',
+        'Guard': 'guarding',
+        'Innkeeper': 'innkeeping',
+        'Beggar': 'begging',
+        'Noble': 'nobility',
+        'Mystic': 'divination',
+    };
+
+  const dndGenders = [
+      'male',
+      'female',
+      'other',
+  ];
+
   React.useEffect(() => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
       setAgentDescription('Calculation, Memory, Scheduling');
     } else if (agentType === 'NPC') {
-      setAgentIcon('👤');
-      setAgentDescription(`Generic ${agentName} NPC Description`);
+        setAgentIcon('👤');
+        setAgentDescription(`Generic ${agentName} NPC Description`);
+        const npcSkill = npcSkills[agentName] || 'default';
+        setSelectedClass(npcSkill);
+
     }
     else {
       const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
@@ -594,6 +681,24 @@ const AgentMakerPage: React.FC = () => {
                 placeholder="Enter agent URL"
               />
             </div>
+              {(agentType === 'character' || agentType === 'NPC') && (
+                  <div>
+                      <Label htmlFor="agent-gender">Agent Gender</Label>
+                      <Select onValueChange={(value) => setSelectedGender(value)} value={selectedGender}>
+                          <SelectTrigger id="agent-gender">
+                              <SelectValue placeholder="Select agent gender"/>
+                          </SelectTrigger>
+                          <SelectContent>
+                              {dndGenders.map((gender) => (
+                                  <SelectItem key={gender} value={gender}>
+                                      {gender}
+                                  </SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+                  </div>
+              )}
+
             {(agentType === 'character') && (
               <div>
                 <Label htmlFor="agent-class">Agent Class</Label>
@@ -622,8 +727,10 @@ const AgentMakerPage: React.FC = () => {
                 <Label htmlFor="agent-icon">Agent NPC</Label>
                 <Select onValueChange={(value) => {
                   setAgentName(value);
-                  setAgentDescription(`Generic ${value} NPC Description`);
-                  setAgentIcon('👤');
+                    setAgentDescription(`Generic ${value} NPC Description`);
+                    setAgentIcon('👤');
+                    const npcSkill = npcSkills[value] || 'default';
+                    setSelectedClass(npcSkill);
                 }} value={agentName}>
                   <SelectTrigger id="agent-npc">
                     <SelectValue placeholder="Select agent NPC"/>
