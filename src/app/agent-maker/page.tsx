@@ -6,7 +6,6 @@ import {Label} from '@/components/ui/label';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {Checkbox} from '@/components/ui/checkbox';
 import {Button} from '@/components/ui/button';
 import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
@@ -164,7 +163,7 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'codesnip/editSnippet', description: 'Edit a specific code snippet in a file'},
                   {name: 'codesnip/findSnippets', description: 'Find code snippets matching a pattern'},
                 ];
-                capabilities = ['code_editing'];
+              capabilities = ['code_editing'];
                 break;
               default:
                 tools = [];
@@ -395,7 +394,78 @@ const AgentMakerPage: React.FC = () => {
         description: 'Calculation, Memory, Scheduling',
         tags: ['service'],
       };
-    } else {
+    } else if (agentType === 'NPC') {
+      // Define skill sets for various NPCs
+      const npcSkills = {
+        Bartender: {
+          id: 'bartending',
+          name: 'Bartending',
+          description: 'Mixing drinks and managing the bar',
+          tags: ['service', 'bar', 'drinks'],
+        },
+        'Old Man': {
+          id: 'wisdom',
+          name: 'Wisdom',
+          description: 'Providing advice and guidance',
+          tags: ['knowledge', 'advice'],
+        },
+        'Woman in Distress': {
+          id: 'deception',
+          name: 'Deception',
+          description: 'Appearing vulnerable to gain assistance',
+          tags: ['acting', 'vulnerability'],
+        },
+        Blacksmith: {
+          id: 'blacksmithing',
+          name: 'Blacksmithing',
+          description: 'Crafting metal items',
+          tags: ['crafting', 'metalwork'],
+        },
+        'Traveling Merchant': {
+          id: 'trading',
+          name: 'Trading',
+          description: 'Buying and selling goods',
+          tags: ['commerce', 'negotiation'],
+        },
+        'Town Guard': {
+          id: 'guarding',
+          name: 'Guarding',
+          description: 'Protecting the town and enforcing laws',
+          tags: ['security', 'law'],
+        },
+        'Wise Hermit': {
+          id: 'herbalism',
+          name: 'Herbalism',
+          description: 'Knowledge of plants and their uses',
+          tags: ['nature', 'medicine'],
+        },
+        Noble: {
+          id: 'diplomacy',
+          name: 'Diplomacy',
+          description: 'Negotiating and managing social situations',
+          tags: ['politics', 'social'],
+        },
+        Jester: {
+          id: 'performance',
+          name: 'Performance',
+          description: 'Entertaining and distracting with humor',
+          tags: ['entertainment', 'humor'],
+        },
+        Acolyte: {
+          id: 'healing',
+          name: 'Healing',
+          description: 'Providing religious and medical aid',
+          tags: ['religion', 'medicine'],
+        },
+      };
+      return npcSkills[agentName] || {
+        id: 'default',
+        name: 'Default Skill',
+        description: 'A default skill with no specific capabilities.',
+        tags: ['default'],
+      };
+    }
+    else {
       skillId = selectedClass;
     }
     const skillOptions = {
@@ -457,7 +527,7 @@ const AgentMakerPage: React.FC = () => {
       setAgentDescription('Calculation, Memory, Scheduling');
     } else if (agentType === 'NPC') {
       setAgentIcon('👤');
-      setAgentDescription('Generic NPC Description');
+      setAgentDescription(`Generic ${agentName} NPC Description`);
     }
     else {
       const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
@@ -465,7 +535,7 @@ const AgentMakerPage: React.FC = () => {
         setAgentIcon(selectedClassDetails.icon);
       }
     }
-  }, [selectedClass, agentType]);
+  }, [selectedClass, agentType, agentName]);
 
   return (
     <div className="container mx-auto py-10">
@@ -495,7 +565,7 @@ const AgentMakerPage: React.FC = () => {
                   setAgentDescription('Calculation, Memory, Scheduling');
                 } else if (value === 'NPC') {
                   setAgentIcon('👤');
-                  setAgentDescription('Generic NPC Description');
+                  setAgentDescription(`Generic ${agentName} NPC Description`);
                 }
               }}>
                 <SelectTrigger id="agent-type">
@@ -650,7 +720,7 @@ const AgentMakerPage: React.FC = () => {
 
           <div className="flex justify-end space-x-2">
             <Button onClick={handleSubmit} disabled={isGenerating}>
-              {isGenerating ? 'Generating...' : 'Generate Agent'}
+              {isGenerating ? 'Generate...' : 'Generate Agent'}
             </Button>
             <Button variant="outline" onClick={handleViewAgentCard} disabled={isGenerating}>
               View AgentCard
