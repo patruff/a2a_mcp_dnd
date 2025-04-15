@@ -85,7 +85,7 @@ const AgentMakerPage: React.FC = () => {
               case '@modelcontextprotocol/server-filesystem':
                 tools = [
                   {name: 'filesystem/readFile', description: 'Read content from a file'},
-                  {name: 'filesystem/writeFile', description: 'Write content to a file'},
+                  {name: 'filesystem/writeFile', description: 'Write content from a file'},
                   {name: 'filesystem/listDirectory', description: 'List contents of a directory'},
                   {name: 'filesystem/deleteFile', description: 'Delete a file'},
                   {name: 'filesystem/createDirectory', description: 'Create a directory'},
@@ -166,7 +166,7 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'codesnip/editSnippet', description: 'Edit a specific code snippet in a file'},
                   {name: 'codesnip/findSnippets', description: 'Find code snippets matching a pattern'},
                 ];
-                capabilities = ['code_editing'];
+              capabilities = ['code_editing'];
                 break;
               default:
                 tools = [];
@@ -860,3 +860,4 @@ const AgentMakerPage: React.FC = () => {
 };
 
 export default AgentMakerPage;
+
