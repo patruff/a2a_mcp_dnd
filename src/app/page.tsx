@@ -44,6 +44,19 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
+             <Card>
+              <CardContent>
+                <Link href="/tavern" className="flex items-center space-x-2">
+                  <Button variant="outline">
+                    <Home className="h-4 w-4 mr-2"/>
+                    Tavern
+                  </Button>
+                </Link>
+                <p className="text-sm text-muted-foreground">
+                  Explore the Smoky Tavern map!
+                </p>
+              </CardContent>
+            </Card>
             <Card>
               <CardContent>
                 <Link href="/agent-list" className="flex items-center space-x-2">
