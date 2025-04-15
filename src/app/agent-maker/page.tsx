@@ -9,12 +9,12 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {Button} from '@/components/ui/button';
 import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
-import { Checkbox } from "@/components/ui/checkbox"
+import {Checkbox} from "@/components/ui/checkbox"
 
 const AgentMakerPage: React.FC = () => {
   const [agentName, setAgentName] = React.useState('DefaultAgentName');
   const [agentType, setAgentType] = React.useState('service');
-  const [agentDescription, setAgentDescription] = React.useState('Default agent description.');
+  const [agentDescription, setAgentDescription] = React.useState('Calculation, Memory, Scheduling');
   const [agentUrl, setAgentUrl] = React.useState('http://localhost:41250');
   const [agentIcon, setAgentIcon] = React.useState('🤖');
   const [agentThemeColor, setAgentThemeColor] = React.useState('#4285F4');
@@ -58,7 +58,7 @@ const AgentMakerPage: React.FC = () => {
         defaultOutputModes: ['text'],
         provider: {
           name: selectedProvider,
-          preferred_model: selectedModel, // Model goes inside the provider object
+          preferred_model: selectedModel,
         },
         version: '0.3.0',
         capabilities: {
@@ -164,7 +164,7 @@ const AgentMakerPage: React.FC = () => {
                   {name: 'codesnip/editSnippet', description: 'Edit a specific code snippet in a file'},
                   {name: 'codesnip/findSnippets', description: 'Find code snippets matching a pattern'},
                 ];
-              capabilities = ['code_editing'];
+                capabilities = ['code_editing'];
                 break;
               default:
                 tools = [];
@@ -213,7 +213,7 @@ const AgentMakerPage: React.FC = () => {
       defaultOutputModes: ['text'],
       provider: {
         name: selectedProvider,
-        preferred_model: selectedModel, // Model goes inside the provider object
+        preferred_model: selectedModel,
       },
       version: '0.3.0',
       capabilities: {
@@ -318,7 +318,7 @@ const AgentMakerPage: React.FC = () => {
               tools = [
                 {name: 'codesnip/editSnippet', description: 'Edit a specific code snippet in a file'},
                 {name: 'codesnip/findSnippets', description: 'Find code snippets matching a pattern'},
-                ];
+              ];
               capabilities = ['code_editing'];
               break;
             default:
@@ -342,7 +342,6 @@ const AgentMakerPage: React.FC = () => {
     };
 
     const agentCardJsonString = JSON.stringify(agentCard, null, 2);
-    //setAgentCardJson(agentCardJsonString)
     router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJsonString)}`);
 
   };
@@ -384,6 +383,19 @@ const AgentMakerPage: React.FC = () => {
     'Noble',
     'Jester',
     'Acolyte',
+  ];
+
+  const themeColors = [
+      '#1A237E', // Dark Blue
+      '#EEEEEE', // Light Gray
+      '#00BCD4', // Teal
+      '#4CAF50', // Green
+      '#FFC107', // Amber
+      '#FF5722', // Deep Orange
+      '#673AB7', // Deep Purple
+      '#795548', // Brown
+      '#607D8B', // Blue Grey
+      '#9E9E9E'  // Grey
   ];
 
   const getSkillDetails = () => {
@@ -568,7 +580,7 @@ const AgentMakerPage: React.FC = () => {
                   setAgentIcon('👤');
                   setAgentDescription(`Generic ${agentName} NPC Description`);
                 }
-              }}>
+              }} value={agentType}>
                 <SelectTrigger id="agent-type">
                   <SelectValue placeholder="Select agent type"/>
                 </SelectTrigger>
@@ -593,14 +605,14 @@ const AgentMakerPage: React.FC = () => {
             </div>
             {(agentType === 'character') && (
               <div>
-                <Label htmlFor="agent-icon">Agent Class</Label>
+                <Label htmlFor="agent-class">Agent Class</Label>
                 <Select onValueChange={(value) => {
                   setSelectedClass(value);
                   const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === value);
                   if (selectedClassDetails) {
                     setAgentIcon(selectedClassDetails.icon);
                   }
-                }} value={agentIcon}>
+                }} value={selectedClass}>
                   <SelectTrigger id="agent-class">
                     <SelectValue placeholder="Select agent class"/>
                   </SelectTrigger>
@@ -640,7 +652,7 @@ const AgentMakerPage: React.FC = () => {
             {(agentType === 'character') && (
               <div>
                 <Label htmlFor="agent-race">Agent Race</Label>
-                <Select onValueChange={(value) => setSelectedRace(value)}>
+                <Select onValueChange={(value) => setSelectedRace(value)} value={selectedRace}>
                   <SelectTrigger id="agent-race">
                     <SelectValue placeholder="Select agent race"/>
                   </SelectTrigger>
@@ -656,13 +668,18 @@ const AgentMakerPage: React.FC = () => {
             )}
             <div>
               <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
-              <Input
-                type="text"
-                id="agent-theme-color"
-                value={agentThemeColor}
-                onChange={(e) => setAgentThemeColor(e.target.value)}
-                placeholder="Enter agent theme color (e.g., #4285F4)"
-              />
+              <Select onValueChange={(value) => setAgentThemeColor(value)} value={agentThemeColor}>
+                <SelectTrigger id="agent-theme-color">
+                  <SelectValue placeholder="Select theme color"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {themeColors.map((color) => (
+                    <SelectItem key={color} value={color}>
+                      {color}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div>
@@ -690,7 +707,7 @@ const AgentMakerPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="provider">Provider</Label>
-              <Select onValueChange={(value) => setSelectedProvider(value)}>
+              <Select onValueChange={(value) => setSelectedProvider(value)} value={selectedProvider}>
                 <SelectTrigger id="provider">
                   <SelectValue placeholder="Select provider"/>
                 </SelectTrigger>
@@ -703,7 +720,7 @@ const AgentMakerPage: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="model">Model</Label>
-              <Select onValueChange={(value) => setSelectedModel(value)} disabled={!selectedProvider}>
+              <Select onValueChange={(value) => setSelectedModel(value)} disabled={!selectedProvider} value={selectedModel}>
                 <SelectTrigger id="model">
                   <SelectValue placeholder="Select model"/>
                 </SelectTrigger>
