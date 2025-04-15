@@ -387,12 +387,16 @@ const AgentMakerPage: React.FC = () => {
 
     const getSkillDetails = () => {
         let skillId;
+        let language;
+        let racialTraits = [];
         if (agentType === 'service') {
             return {
                 id: 'service',
                 name: 'Service',
                 description: 'Calculation, Memory, Scheduling',
                 tags: ['service'],
+                language: 'N/A', // Services don't typically have a language
+                racialTraits: [], // Services don't have racial traits
             };
         } else if (agentType === 'NPC') {
             // Define skill sets for various NPCs
@@ -402,71 +406,128 @@ const AgentMakerPage: React.FC = () => {
                     name: 'Bartending',
                     description: 'Mixing drinks and managing the bar',
                     tags: ['service', 'bar', 'drinks'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 'Old Man': {
                     id: 'wisdom',
                     name: 'Wisdom',
                     description: 'Providing advice and guidance',
                     tags: ['knowledge', 'advice'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 'Woman in Distress': {
                     id: 'deception',
                     name: 'Deception',
                     description: 'Appearing vulnerable to gain assistance',
                     tags: ['acting', 'vulnerability'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 Blacksmith: {
                     id: 'blacksmithing',
                     name: 'Blacksmithing',
                     description: 'Crafting metal items',
                     tags: ['crafting', 'metalwork'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 'Traveling Merchant': {
                     id: 'trading',
                     name: 'Trading',
                     description: 'Buying and selling goods',
                     tags: ['commerce', 'negotiation'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 'Town Guard': {
                     id: 'guarding',
                     name: 'Guarding',
                     description: 'Protecting the town and enforcing laws',
                     tags: ['security', 'law'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 'Wise Hermit': {
                     id: 'herbalism',
                     name: 'Herbalism',
                     description: 'Knowledge of plants and their uses',
                     tags: ['nature', 'medicine'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 Noble: {
                     id: 'diplomacy',
                     name: 'Diplomacy',
                     description: 'Negotiating and managing social situations',
                     tags: ['politics', 'social'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 Jester: {
                     id: 'performance',
                     name: 'Performance',
                     description: 'Entertaining and distracting with humor',
                     tags: ['entertainment', 'humor'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
                 Acolyte: {
                     id: 'healing',
                     name: 'Healing',
                     description: 'Providing religious and medical aid',
                     tags: ['religion', 'medicine'],
+                    language: 'Common',
+                    racialTraits: [],
                 },
             };
-            return npcSkills[agentName] || {
+            const npcSkill = npcSkills[agentName] || {
                 id: 'default',
                 name: 'Default Skill',
                 description: 'A default skill with no specific capabilities.',
                 tags: ['default'],
+                language: 'Common',
+                racialTraits: [],
             };
+            return npcSkill;
         }
         else {
             skillId = selectedClass;
+            switch (selectedRace) {
+                case 'Elf':
+                    language = 'Elvish';
+                    racialTraits = ['Darkvision', 'Keen Senses', 'Fey Ancestry', 'Trance'];
+                    break;
+                case 'Dwarf':
+                    language = 'Dwarvish';
+                    racialTraits = ['Darkvision', 'Dwarven Resilience', 'Dwarven Combat Training', 'Stonecunning'];
+                    break;
+                case 'Gnome':
+                    language = 'Gnomish';
+                    racialTraits = ['Darkvision', 'Gnome Cunning'];
+                    break;
+                case 'Halfling':
+                    language = 'Halfling';
+                    racialTraits = ['Lucky', 'Brave', 'Halfling Nimbleness'];
+                    break;
+                case 'Dragonborn':
+                    language = 'Draconic';
+                    racialTraits = ['Draconic Ancestry', 'Breath Weapon', 'Damage Resistance'];
+                    break;
+                case 'Tiefling':
+                    language = 'Infernal';
+                    racialTraits = ['Darkvision', 'Hellish Resistance', 'Infernal Legacy'];
+                    break;
+                case 'Orc':
+                    language = 'Orcish';
+                    racialTraits = ['Darkvision', 'Aggressive', 'Menacing'];
+                    break;
+                default:
+                    language = 'Common';
+                    racialTraits = [];
+                    break;
+            }
         }
         const skillOptions = {
             wizard: {
@@ -474,48 +535,64 @@ const AgentMakerPage: React.FC = () => {
                 name: 'Magic',
                 description: 'Utilizes magical powers for various tasks.',
                 tags: ['magic', 'powers'],
+                language: language,
+                racialTraits: racialTraits,
             },
             rogue: {
                 id: 'stealth',
                 name: 'Stealth',
                 description: 'Executes covert operations and remains unseen.',
                 tags: ['covert', 'operations'],
+                language: language,
+                racialTraits: racialTraits,
             },
             cleric: {
                 id: 'healing',
                 name: 'Healing',
                 description: 'Provides medical assistance and support.',
                 tags: ['medical', 'support'],
+                language: language,
+                racialTraits: racialTraits,
             },
             fighter: {
                 id: 'combat',
                 name: 'Combat',
                 description: 'Engages in combat and strategic battles.',
                 tags: ['combat', 'strategy'],
+                language: language,
+                racialTraits: racialTraits,
             },
             bard: {
                 id: 'performance',
                 name: 'Performance',
                 description: 'Entertains and inspires through music and stories.',
                 tags: ['performance', 'inspiration'],
+                language: language,
+                racialTraits: racialTraits,
             },
             sorcerer: {
                 id: 'elemental_magic',
                 name: 'Elemental Magic',
                 description: 'Wields powerful elemental magic.',
                 tags: ['magic', 'elements'],
+                language: language,
+                racialTraits: racialTraits,
             },
             service: {
                 id: 'service',
                 name: 'Service',
                 description: 'Calculation, Memory, Scheduling',
                 tags: ['service'],
+                language: 'N/A',
+                racialTraits: [],
             },
             default: {
                 id: 'default',
                 name: 'Default Skill',
                 description: 'A default skill with no specific capabilities.',
                 tags: ['default'],
+                language: language,
+                racialTraits: racialTraits,
             },
         };
         return skillOptions[skillId] || skillOptions.default;
