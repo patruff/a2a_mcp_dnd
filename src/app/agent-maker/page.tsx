@@ -22,7 +22,8 @@ const AgentMakerPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [selectedProvider, setSelectedProvider] = React.useState<string>('Google');
   const [selectedModel, setSelectedModel] = React.useState<string>('gemini-2-flash');
-  const [selectedSkill, setSelectedSkill] = React.useState<string>('code_assistance');
+  const [selectedClass, setSelectedClass] = React.useState<string>('wizard');
+  const [selectedRace, setSelectedRace] = React.useState<string>('human');
 
   const {toast} = useToast();
   const router = useRouter();
@@ -91,7 +92,7 @@ const AgentMakerPage: React.FC = () => {
       },
       authentication: null,
       skills: [
-        getSkillDetails(selectedSkill),
+        getSkillDetails(selectedClass),
       ],
       metadata: {
         icon: agentIcon,
@@ -227,61 +228,80 @@ const AgentMakerPage: React.FC = () => {
     Groq: ['qwen-qwq-32b'],
   };
 
-  const dndIcons = [
-    '🧙‍♂️', // Wizard
-    '🗡️', // Sword
-    '🛡️', // Shield
-    '🏹', // Bow and Arrow
-    '🧝', // Elf
-    '🐉', // Dragon
-    '🌟', // Magic
-    '🗺️', // Map
-    '📜', // Scroll
-    '💀', // Skull
+  const dndClasses = [
+    {name: 'Wizard', icon: '🧙‍♂️'},
+    {name: 'Rogue', icon: '🗡️'},
+    {name: 'Cleric', icon: '🛡️'},
+    {name: 'Fighter', icon: '🏹'},
+    {name: 'Bard', icon: '🧝'},
+    {name: 'Sorcerer', icon: '🐉'},
   ];
 
-  const skillOptions = [
-    {
-      id: 'code_assistance',
-      name: 'Code Assistance',
-      description: 'Helps manage code and provides coding assistance.',
-      tags: ['coding', 'development', 'file-management'],
-    },
-    {
-      id: 'healing',
-      name: 'Healing',
-      description: 'Provides medical assistance and support.',
-      tags: ['medical', 'support'],
-    },
-    {
-      id: 'magic',
-      name: 'Magic',
-      description: 'Utilizes magical powers for various tasks.',
-      tags: ['magic', 'powers'],
-    },
-    {
-      id: 'combat',
-      name: 'Combat',
-      description: 'Engages in combat and strategic battles.',
-      tags: ['combat', 'strategy'],
-    },
-    {
-      id: 'stealth',
-      name: 'Stealth',
-      description: 'Executes covert operations and remains unseen.',
-      tags: ['covert', 'operations'],
-    },
+  const dndRaces = [
+    'Human',
+    'Elf',
+    'Dwarf',
+    'Gnome',
+    'Halfling',
+    'Dragonborn',
+    'Tiefling',
+    'Orc',
   ];
 
   const getSkillDetails = (skillId: string) => {
-    const skill = skillOptions.find((s) => s.id === skillId);
-    return skill || {
-      id: 'default',
-      name: 'Default Skill',
-      description: 'A default skill with no specific capabilities.',
-      tags: ['default'],
+    const skillOptions = {
+      wizard: {
+        id: 'magic',
+        name: 'Magic',
+        description: 'Utilizes magical powers for various tasks.',
+        tags: ['magic', 'powers'],
+      },
+      rogue: {
+        id: 'stealth',
+        name: 'Stealth',
+        description: 'Executes covert operations and remains unseen.',
+        tags: ['covert', 'operations'],
+      },
+      cleric: {
+        id: 'healing',
+        name: 'Healing',
+        description: 'Provides medical assistance and support.',
+        tags: ['medical', 'support'],
+      },
+      fighter: {
+        id: 'combat',
+        name: 'Combat',
+        description: 'Engages in combat and strategic battles.',
+        tags: ['combat', 'strategy'],
+      },
+      bard: {
+        id: 'performance',
+        name: 'Performance',
+        description: 'Entertains and inspires through music and stories.',
+        tags: ['performance', 'inspiration'],
+      },
+      sorcerer: {
+        id: 'elemental_magic',
+        name: 'Elemental Magic',
+        description: 'Wields powerful elemental magic.',
+        tags: ['magic', 'elements'],
+      },
+      default: {
+        id: 'default',
+        name: 'Default Skill',
+        description: 'A default skill with no specific capabilities.',
+        tags: ['default'],
+      },
     };
+    return skillOptions[skillId] || skillOptions.default;
   };
+
+  React.useEffect(() => {
+    const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
+    if (selectedClassDetails) {
+      setAgentIcon(selectedClassDetails.icon);
+    }
+  }, [selectedClass]);
 
   return (
     <div className="container mx-auto py-10">
@@ -328,30 +348,53 @@ const AgentMakerPage: React.FC = () => {
               />
             </div>
             <div>
-              <Label htmlFor="agent-icon">Agent Icon</Label>
-              <Select onValueChange={(value) => setAgentIcon(value)} value={agentIcon}>
-                <SelectTrigger id="agent-icon">
-                  <SelectValue placeholder="Select agent icon (e.g., 🧙‍♂️)"/>
+              <Label htmlFor="agent-icon">Agent Class</Label>
+              <Select onValueChange={(value) => {
+                setSelectedClass(value);
+                const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === value);
+                if (selectedClassDetails) {
+                  setAgentIcon(selectedClassDetails.icon);
+                }
+              }} value={agentIcon}>
+                <SelectTrigger id="agent-class">
+                  <SelectValue placeholder="Select agent class"/>
                 </SelectTrigger>
                 <SelectContent>
-                  {dndIcons.map((icon) => (
-                    <SelectItem key={icon} value={icon}>
-                      {icon}
+                  {dndClasses.map((dndClass) => (
+                    <SelectItem key={dndClass.name} value={dndClass.name.toLowerCase()}>
+                      {dndClass.icon} {dndClass.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-          <div>
-            <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
-            <Input
-              type="text"
-              id="agent-theme-color"
-              value={agentThemeColor}
-              onChange={(e) => setAgentThemeColor(e.target.value)}
-              placeholder="Enter agent theme color (e.g., #4285F4)"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="agent-race">Agent Race</Label>
+              <Select onValueChange={(value) => setSelectedRace(value)}>
+                <SelectTrigger id="agent-race">
+                  <SelectValue placeholder="Select agent race"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {dndRaces.map((race) => (
+                    <SelectItem key={race} value={race}>
+                      {race}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
+              <Input
+                type="text"
+                id="agent-theme-color"
+                value={agentThemeColor}
+                onChange={(e) => setAgentThemeColor(e.target.value)}
+                placeholder="Enter agent theme color (e.g., #4285F4)"
+              />
+            </div>
           </div>
           <div>
             <Label htmlFor="agent-description">Agent Description</Label>
@@ -365,16 +408,18 @@ const AgentMakerPage: React.FC = () => {
 
           <div>
             <Label htmlFor="skill">Skill</Label>
-            <Select onValueChange={(value) => setSelectedSkill(value)}>
+            <Select onValueChange={(value) => setSelectedClass(value)}>
               <SelectTrigger id="skill">
                 <SelectValue placeholder="Select agent skill"/>
               </SelectTrigger>
               <SelectContent>
-                {skillOptions.map((skill) => (
-                  <SelectItem key={skill.id} value={skill.id}>
-                    {skill.name}
-                  </SelectItem>
-                ))}
+                {Object.entries(getSkillDetails)
+                  .filter(([key]) => key !== 'default')
+                  .map(([key, skill]: [string, any]) => (
+                    <SelectItem key={key} value={key}>
+                      {skill.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
