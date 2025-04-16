@@ -252,6 +252,8 @@ const AgentMakerPage: React.FC = () => {
       title: 'Agent Generated',
       description: `Added agent ${agentName} to the list of agents. See the agent list page for more.`,
     });
+
+    router.push('/agent-list');
   };
 
   const providerModels: {[key: string]: string[]} = {
