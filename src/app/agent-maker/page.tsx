@@ -512,13 +512,27 @@ const AgentMakerPage: React.FC = () => {
     'musical',
   ];
 
+    const npcIcons = {
+        'Bartender': '🍺',
+        'Blacksmith': '🔨',
+        'Old Man': '👴',
+        'Woman in Distress': '🥺',
+        'Merchant': '💰',
+        'Guard': '🛡️',
+        'Innkeeper': '🏨',
+        'Beggar': '🕳️',
+        'Noble': '👑',
+        'Mystic': '🔮'
+    };
+
   React.useEffect(() => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
       setAgentDescription('Calculation, Memory, Scheduling');
         setSelectedClass('service');
     } else if (agentType === 'NPC') {
-        setAgentIcon('👤');
+        const npcIcon = npcIcons[agentName] || '👤';
+        setAgentIcon(npcIcon);
         setAgentDescription(`Generic ${agentName} NPC Description`);
         const npcSkill = npcSkills[agentName] || 'default';
         setSelectedClass(npcSkill);
@@ -587,8 +601,11 @@ const AgentMakerPage: React.FC = () => {
                     setSelectedClass('service');
 
                 } else if (value === 'NPC') {
-                  setAgentIcon('👤');
+                  const npcIcon = npcIcons[agentName] || '👤';
+                  setAgentIcon(npcIcon);
                   setAgentDescription(`Generic ${agentName} NPC Description`);
+                    setSelectedClass(value.toLowerCase());
+
                 }
               }} value={agentType}>
                 <SelectTrigger id="agent-type">
@@ -660,7 +677,8 @@ const AgentMakerPage: React.FC = () => {
                 <Select onValueChange={(value) => {
                   setAgentName(value);
                     setAgentDescription(`Generic ${value} NPC Description`);
-                    setAgentIcon('👤');
+                    const npcIcon = npcIcons[value] || '👤';
+                    setAgentIcon(npcIcon);
                     const npcSkill = npcSkills[value] || 'default';
                     setSelectedClass(npcSkill);
                 }} value={agentName}>
@@ -670,7 +688,7 @@ const AgentMakerPage: React.FC = () => {
                   <SelectContent>
                     {dndNpcs.map((npc) => (
                       <SelectItem key={npc} value={npc}>
-                        👤 {npc}
+                        {npcIcons[npc] || '👤'} {npc}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -848,38 +866,6 @@ const AgentMakerPage: React.FC = () => {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="provider">Provider</Label>
-              <Select onValueChange={(value) => setSelectedProvider(value)} value={selectedProvider}>
-                <SelectTrigger id="provider">
-                  <SelectValue placeholder="Select provider"/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Google">Google</SelectItem>
-                  <SelectItem value="Cerebras">Cerebras</SelectItem>
-                  <SelectItem value="Groq">Groq</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="model">Model</Label>
-              <Select onValueChange={(value) => setSelectedModel(value)} disabled={!selectedProvider} value={selectedModel}>
-                <SelectTrigger id="model">
-                  <SelectValue placeholder="Select model"/>
-                </SelectTrigger>
-                <SelectContent>
-                  {selectedProvider &&
-                    providerModels[selectedProvider]?.map((model) => (
-                      <SelectItem key={model} value={model}>
-                        {model}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
           <div className="flex justify-end space-x-2">
               <AlertDialog>
                   <AlertDialogTrigger asChild>
