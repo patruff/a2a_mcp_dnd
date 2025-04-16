@@ -28,12 +28,6 @@ const AgentMakerPage: React.FC = () => {
   const [selectedRace, setSelectedRace] = React.useState<string>('human');
   const [selectedAlignment, setSelectedAlignment] = React.useState<string>('neutral good');
   const [selectedGender, setSelectedGender] = React.useState<string>('male');
-  const [strength, setStrength] = useState<number>(10);
-  const [dexterity, setDexterity] = useState<number>(10);
-  const [constitution, setConstitution] = useState<number>(10);
-  const [intelligence, setIntelligence] = useState<number>(10);
-  const [wisdom, setWisdom] = useState<number>(10);
-  const [charisma, setCharisma] = useState<number>(10);
   const [initialAction, setInitialAction] = useState<string>('');
   const [selectedPersonality, setSelectedPersonality] = useState<string>('stoic');
   const [selectedSpeechStyle, setSelectedSpeechStyle] = useState<string>('formal');
@@ -276,6 +270,43 @@ const AgentMakerPage: React.FC = () => {
     'Tiefling',
     'Orc',
   ];
+
+  const getRacialStatBonuses = (race: string) => {
+    switch (race) {
+      case 'Elf':
+        return { dexterity: 2 };
+      case 'Dwarf':
+        return { constitution: 2 };
+      case 'Gnome':
+        return { intelligence: 2 };
+      case 'Halfling':
+        return { dexterity: 2 };
+      case 'Dragonborn':
+        return { strength: 2, charisma: 1 };
+      case 'Tiefling':
+        return { intelligence: 1, charisma: 2 };
+      case 'Orc':
+        return { strength: 2, constitution: 1 };
+      default: // Human
+        return { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 };
+    }
+  };
+
+  const [strengthBase, setStrengthBase] = useState<number>(10);
+  const [dexterityBase, setDexterityBase] = useState<number>(10);
+  const [constitutionBase, setConstitutionBase] = useState<number>(10);
+  const [intelligenceBase, setIntelligenceBase] = useState<number>(10);
+  const [wisdomBase, setWisdomBase] = useState<number>(10);
+  const [charismaBase, setCharismaBase] = useState<number>(10);
+
+  const racialBonuses = getRacialStatBonuses(selectedRace);
+
+  const strength = strengthBase + (racialBonuses.strength || 0);
+  const dexterity = dexterityBase + (racialBonuses.dexterity || 0);
+  const constitution = constitutionBase + (racialBonuses.constitution || 0);
+  const intelligence = intelligenceBase + (racialBonuses.intelligence || 0);
+  const wisdom = wisdomBase + (racialBonuses.wisdom || 0);
+  const charisma = charismaBase + (racialBonuses.charisma || 0);
 
   const getSkillDetails = () => {
     let skillId;
@@ -752,64 +783,70 @@ const AgentMakerPage: React.FC = () => {
           {(agentType === 'character' || agentType === 'NPC') && (
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="strength">Strength</Label>
+                <Label htmlFor="strength">Strength (Base: 10)</Label>
                 <Input
                   type="number"
                   id="strength"
-                  value={String(strength)}
-                  onChange={(e) => setStrength(Number(e.target.value))}
+                  value={String(strengthBase)}
+                  onChange={(e) => setStrengthBase(Number(e.target.value))}
                   placeholder="Strength"
                 />
+                <div>Total: {strength}</div>
               </div>
               <div>
-                <Label htmlFor="dexterity">Dexterity</Label>
+                <Label htmlFor="dexterity">Dexterity (Base: 10)</Label>
                 <Input
                   type="number"
                   id="dexterity"
-                  value={String(dexterity)}
-                  onChange={(e) => setDexterity(Number(e.target.value))}
+                  value={String(dexterityBase)}
+                  onChange={(e) => setDexterityBase(Number(e.target.value))}
                   placeholder="Dexterity"
                 />
+                <div>Total: {dexterity}</div>
               </div>
               <div>
-                <Label htmlFor="constitution">Constitution</Label>
+                <Label htmlFor="constitution">Constitution (Base: 10)</Label>
                 <Input
                   type="number"
                   id="constitution"
-                  value={String(constitution)}
-                  onChange={(e) => setConstitution(Number(e.target.value))}
+                  value={String(constitutionBase)}
+                  onChange={(e) => setConstitutionBase(Number(e.target.value))}
                   placeholder="Constitution"
                 />
+                 <div>Total: {constitution}</div>
               </div>
               <div>
-                <Label htmlFor="intelligence">Intelligence</Label>
+                <Label htmlFor="intelligence">Intelligence (Base: 10)</Label>
                 <Input
                   type="number"
                   id="intelligence"
-                  value={String(intelligence)}
-                  onChange={(e) => setIntelligence(Number(e.target.value))}
+                  value={String(intelligenceBase)}
+                  onChange={(e) => setIntelligenceBase(Number(e.target.value))}
                   placeholder="Intelligence"
                 />
+                 <div>Total: {intelligence}</div>
               </div>
               <div>
-                <Label htmlFor="wisdom">Wisdom</Label>
+                <Label htmlFor="wisdom">Wisdom (Base: 10)</Label>
                 <Input
                   type="number"
                   id="wisdom"
-                  value={String(wisdom)}
-                  onChange={(e) => setWisdom(Number(e.target.value))}
+                  value={String(wisdomBase)}
+                  onChange={(e) => setWisdomBase(Number(e.target.value))}
                   placeholder="Wisdom"
                 />
+                 <div>Total: {wisdom}</div>
               </div>
               <div>
-                <Label htmlFor="charisma">Charisma</Label>
+                <Label htmlFor="charisma">Charisma (Base: 10)</Label>
                 <Input
                   type="number"
                   id="charisma"
-                  value={String(charisma)}
-                  onChange={(e) => setCharisma(Number(e.target.value))}
+                  value={String(charismaBase)}
+                  onChange={(e) => setCharismaBase(Number(e.target.value))}
                   placeholder="Charisma"
                 />
+                 <div>Total: {charisma}</div>
               </div>
             </div>
           )}
