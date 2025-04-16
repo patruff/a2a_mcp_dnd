@@ -6,6 +6,16 @@ To get started, take a look at src/app/page.tsx.
 
 ## Key files for each section:
 
+### Technologies Used:
+
+- **Next.js**: A React framework for building server-rendered and statically generated web applications.
+- **React**: A JavaScript library for building user interfaces.
+- **TypeScript**: A typed superset of JavaScript that enhances code quality and maintainability.
+- **Tailwind CSS**: A utility-first CSS framework for rapidly designing custom user interfaces.
+- **ShadCN UI**: A collection of pre-built, customizable UI components for React, built on top of Radix UI and Tailwind CSS.
+- **Lucide React**: A library of beautiful, consistent icons for React applications.
+- **Genkit**: GenAI related code.
+
 - **Landing Page:**
   - `src/app/page.tsx`: This file contains the main landing page of the application, providing an overview and links to other sections.
   - **Code Context**: The landing page uses `next/link` for navigation between different sections and displays cards with descriptions for each section.
@@ -20,6 +30,9 @@ To get started, take a look at src/app/page.tsx.
   - **Code Context**:
     - **Dependencies**:
       - React: Used for building the UI components.
+      - `react-hook-form`: Manages form state and validation.
+      - `@hookform/resolvers`: Integrates Zod for schema-based validation.
+      - `zod`: Defines the schema for the form inputs.
       - `@/components/ui/*`: Shadcn UI components for consistent styling.
       - `next/navigation`: Used to navigate between pages.
       - `useState`: Stores agent data.
@@ -70,7 +83,6 @@ To get started, take a look at src/app/page.tsx.
     - **Dependencies**:
       - React: Used for building the UI components.
       - `@/components/ui/*`: Shadcn UI components for consistent styling.
-      - `react-json-view`: Displays the JSON in a formatted and interactive way.
       - `lucide-react`: For icons.
     - The MCP list page fetches MCP data from a data source (currently a hardcoded list) and renders it in an accordion component.
     - Each MCP item includes a name, description, and a collapsible section with detailed information about the MCP's tools and configuration.
@@ -88,4 +100,5 @@ To get started, take a look at src/app/page.tsx.
   - `src/app/tavern/page.tsx`: This file displays the Smoky Tavern map.
   - `src/app/TavernMap.css`: This file styles the tavern map.
   - **Code Context**: The Tavern page uses React to create a visual representation of a tavern map. It includes features such as furniture, characters, and lighting effects. Characters can be moved around the map using directional controls.
+
 
