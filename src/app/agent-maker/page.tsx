@@ -41,9 +41,9 @@ const AgentMakerPage: React.FC = () => {
   const {toast} = useToast();
   const router = useRouter();
 
-    const [agentCardJson, setAgentCardJson] = useState<string>('');
+  const [agentCardJson, setAgentCardJson] = useState<string>('');
 
-    const [agentList, setAgentList] = useState<any[]>([]);
+  const [agentList, setAgentList] = useState<any[]>([]);
 
   const availableMcps = [
     '@modelcontextprotocol/server-filesystem',
@@ -58,7 +58,7 @@ const AgentMakerPage: React.FC = () => {
     '@patruff/server-codesnip',
   ];
 
-  const generateAgentCard = () => {
+  const generateAgentCard = (skillDetails: any) => {
     const agentCard = {
       name: agentName,
       description: agentDescription,
@@ -79,7 +79,7 @@ const AgentMakerPage: React.FC = () => {
       },
       authentication: null,
       skills: [
-        getSkillDetails(),
+        skillDetails,
       ],
       metadata: {
         icon: agentIcon,
@@ -195,27 +195,27 @@ const AgentMakerPage: React.FC = () => {
           };
         }),
       },
-        character: {
-            name: agentName,
-            race: selectedRace,
-            class: selectedClass,
-            level: 1,
-            personality: selectedPersonality,
-            speech_style: selectedSpeechStyle,
-            description: agentDescription,
-            port: 41249,
-            initial_action: initialAction,
-            skills: [],
-            stats: {
-                strength: strength,
-                dexterity: dexterity,
-                constitution: constitution,
-                intelligence: intelligence,
-                wisdom: wisdom,
-                charisma: charisma
-            },
-            skills_list: [],
+      character: {
+        name: agentName,
+        race: selectedRace,
+        class: selectedClass,
+        level: 1,
+        personality: selectedPersonality,
+        speech_style: selectedSpeechStyle,
+        description: agentDescription,
+        port: 41249,
+        initial_action: initialAction,
+        skills: [],
+        stats: {
+          strength: strength,
+          dexterity: dexterity,
+          constitution: constitution,
+          intelligence: intelligence,
+          wisdom: wisdom,
+          charisma: charisma
         },
+        skills_list: [],
+      },
     };
     return agentCard;
   };
@@ -225,31 +225,37 @@ const AgentMakerPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-      const agentCard = generateAgentCard();
-      const agentCardJsonString = JSON.stringify(agentCard, null, 2);
-      setAgentCardJson(agentCardJsonString);
+    let skillDetails;
+    if (agentType === 'NPC') {
+      skillDetails = npcSkillsDetails[selectedClass];
+    } else {
+      skillDetails = getSkillDetails();
+    }
+    const agentCard = generateAgentCard(skillDetails);
+    const agentCardJsonString = JSON.stringify(agentCard, null, 2);
+    setAgentCardJson(agentCardJsonString);
 
-        // Add the agent to the agent list
-        setAgentList((prevList) => [
-            ...prevList,
-            {
-                name: agentName,
-                type: agentType,
-                class: selectedClass,
-            },
-        ]);
+    // Add the agent to the agent list
+    setAgentList((prevList) => [
+      ...prevList,
+      {
+        name: agentName,
+        type: agentType,
+        class: selectedClass,
+      },
+    ]);
 
-        toast({
-            title: 'Agent Generated',
-            description: `Added agent ${agentName} to the list of agents. See the agent list page for more.`,
-        });
-    };
+    toast({
+      title: 'Agent Generated',
+      description: `Added agent ${agentName} to the list of agents. See the agent list page for more.`,
+    });
+  };
 
-    const providerModels: {[key: string]: string[]} = {
-        Google: ['gemini-2-flash'],
-        Cerebras: ['llama-4-scout-17b-16e-instruct'],
-        Groq: ['qwen-qwq-32b'],
-    };
+  const providerModels: {[key: string]: string[]} = {
+    Google: ['gemini-2-flash'],
+    Cerebras: ['llama-4-scout-17b-16e-instruct'],
+    Groq: ['qwen-qwq-32b'],
+  };
 
   const dndClasses = [
     {name: 'Wizard', icon: '🧙‍♂️'},
@@ -271,122 +277,117 @@ const AgentMakerPage: React.FC = () => {
     'Orc',
   ];
 
-    const getSkillDetails = () => {
-        let skillId;
-        let language;
-        let racialTraits = [];
+  const getSkillDetails = () => {
+    let skillId;
+    let language;
+    let racialTraits = [];
 
-        if (agentType === 'service') {
-            return {
-                id: 'service',
-                name: 'Service',
-                description: 'Calculation, Memory, Scheduling',
-                tags: ['service'],
-                language: 'N/A', // Services don't typically have a language
-                racialTraits: [], // Services don't have racial traits
-            };
-        }
-         else if (agentType === 'NPC') {
-          const npcSkill = npcSkills[agentName] || 'default';
-          return npcSkillsDetails[npcSkill] || npcSkillsDetails.default;
-        }
-        else {
-            skillId = selectedClass;
-            switch (selectedRace) {
-                case 'Elf':
-                    language = 'Elvish';
-                    racialTraits = ['Darkvision', 'Keen Senses', 'Fey Ancestry', 'Trance'];
-                    break;
-                case 'Dwarf':
-                    language = 'Dwarvish';
-                    racialTraits = ['Darkvision', 'Dwarven Resilience', 'Dwarven Combat Training', 'Stonecunning'];
-                    break;
-                case 'Gnome':
-                    language = 'Gnomish';
-                    racialTraits = ['Darkvision', 'Gnome Cunning'];
-                    break;
-                case 'Halfling':
-                    language = 'Halfling';
-                    racialTraits = ['Lucky', 'Brave', 'Halfling Nimbleness'];
-                    break;
-                case 'Dragonborn':
-                    language = 'Draconic';
-                    racialTraits = ['Draconic Ancestry', 'Breath Weapon', 'Damage Resistance'];
-                    break;
-                case 'Tiefling':
-                    language = 'Infernal';
-                    racialTraits = ['Darkvision', 'Hellish Resistance', 'Infernal Legacy'];
-                    break;
-                case 'Orc':
-                    language = 'Orcish';
-                    racialTraits = ['Darkvision', 'Aggressive', 'Menacing'];
-                    break;
-                default:
-                    language = 'Common';
-                    racialTraits = [];
-                    break;
-            }
-        }
-        const skillOptions = {
-            wizard: {
-                id: 'magic',
-                name: 'Magic',
-                description: 'Utilizes magical powers for various tasks.',
-                tags: ['magic', 'powers'],
-                language: language,
-                racialTraits: racialTraits,
-            },
-            rogue: {
-                id: 'stealth',
-                name: 'Stealth',
-                description: 'Executes covert operations and remains unseen.',
-                tags: ['covert', 'operations'],
-                language: language,
-                racialTraits: racialTraits,
-            },
-            cleric: {
-                id: 'healing',
-                name: 'Healing',
-                description: 'Provides medical assistance and support.',
-                tags: ['medical', 'support'],
-                language: language,
-                racialTraits: racialTraits,
-            },
-            fighter: {
-                id: 'combat',
-                name: 'Combat',
-                description: 'Engages in combat and strategic battles.',
-                tags: ['combat', 'strategy'],
-                language: language,
-                racialTraits: racialTraits,
-            },
-            bard: {
-                id: 'performance',
-                name: 'Performance',
-                description: 'Entertains and inspires through music and stories.',
-                tags: ['performance', 'inspiration'],
-                language: language,
-                racialTraits: racialTraits,
-            },
-            sorcerer: {
-                id: 'elemental_magic',
-                name: 'Elemental Magic',
-                description: 'Wields powerful elemental magic.',
-                tags: ['magic', 'elements'],
-                language: language,
-                racialTraits: racialTraits,
-            },
-            service: {
-                id: 'service',
-                name: 'Service',
-                description: 'Calculation, Memory, Scheduling',
-                tags: ['service'],
-                language: 'N/A',
-                racialTraits: [],
-            },
-        };
-        return skillOptions[skillId] || skillOptions.default;
+    if (agentType === 'service') {
+      return {
+        id: 'service',
+        name: 'Service',
+        description: 'Calculation, Memory, Scheduling',
+        tags: ['service'],
+        language: 'N/A', // Services don't typically have a language
+        racialTraits: [], // Services don't have racial traits
+      };
+    } else {
+      skillId = selectedClass;
+      switch (selectedRace) {
+        case 'Elf':
+          language = 'Elvish';
+          racialTraits = ['Darkvision', 'Keen Senses', 'Fey Ancestry', 'Trance'];
+          break;
+        case 'Dwarf':
+          language = 'Dwarvish';
+          racialTraits = ['Darkvision', 'Dwarven Resilience', 'Dwarven Combat Training', 'Stonecunning'];
+          break;
+        case 'Gnome':
+          language = 'Gnomish';
+          racialTraits = ['Darkvision', 'Gnome Cunning'];
+          break;
+        case 'Halfling':
+          language = 'Halfling';
+          racialTraits = ['Lucky', 'Brave', 'Halfling Nimbleness'];
+          break;
+        case 'Dragonborn':
+          language = 'Draconic';
+          racialTraits = ['Draconic Ancestry', 'Breath Weapon', 'Damage Resistance'];
+          break;
+        case 'Tiefling':
+          language = 'Infernal';
+          racialTraits = ['Darkvision', 'Hellish Resistance', 'Infernal Legacy'];
+          break;
+        case 'Orc':
+          language = 'Orcish';
+          racialTraits = ['Darkvision', 'Aggressive', 'Menacing'];
+          break;
+        default:
+          language = 'Common';
+          racialTraits = [];
+          break;
+      }
+    }
+    const skillOptions = {
+      wizard: {
+        id: 'magic',
+        name: 'Magic',
+        description: 'Utilizes magical powers for various tasks.',
+        tags: ['magic', 'powers'],
+        language: language,
+        racialTraits: racialTraits,
+      },
+      rogue: {
+        id: 'stealth',
+        name: 'Stealth',
+        description: 'Executes covert operations and remains unseen.',
+        tags: ['covert', 'operations'],
+        language: language,
+        racialTraits: racialTraits,
+      },
+      cleric: {
+        id: 'healing',
+        name: 'Healing',
+        description: 'Provides medical assistance and support.',
+        tags: ['medical', 'support'],
+        language: language,
+        racialTraits: racialTraits,
+      },
+      fighter: {
+        id: 'combat',
+        name: 'Combat',
+        description: 'Engages in combat and strategic battles.',
+        tags: ['combat', 'strategy'],
+        language: language,
+        racialTraits: racialTraits,
+      },
+      bard: {
+        id: 'performance',
+        name: 'Performance',
+        description: 'Entertains and inspires through music and stories.',
+        tags: ['performance', 'inspiration'],
+        language: language,
+        racialTraits: racialTraits,
+      },
+      sorcerer: {
+        id: 'elemental_magic',
+        name: 'Elemental Magic',
+        description: 'Wields powerful elemental magic.',
+        tags: ['magic', 'elements'],
+        language: language,
+        racialTraits: racialTraits,
+      },
+      service: {
+        id: 'service',
+        name: 'Service',
+        description: 'Calculation, Memory, Scheduling',
+        tags: ['service'],
+        language: 'N/A',
+        racialTraits: [],
+      },
     };
+    return skillOptions[skillId] || skillOptions.default;
+  };
 
   const dndAlignments = [
     'lawful good', 'neutral good', 'chaotic good',
@@ -407,18 +408,18 @@ const AgentMakerPage: React.FC = () => {
     'Mystic'
   ];
 
-    const npcSkills = {
-        'Bartender': 'innkeeping',
-        'Blacksmith': 'blacksmithing',
-        'Old Man': 'aid',
-        'Woman in Distress': 'aid',
-        'Merchant': 'trading',
-        'Guard': 'guarding',
-        'Innkeeper': 'innkeeping',
-        'Beggar': 'begging',
-        'Noble': 'nobility',
-        'Mystic': 'divination',
-    };
+  const npcSkills = {
+    'Bartender': 'innkeeping',
+    'Blacksmith': 'blacksmithing',
+    'Old Man': 'aid',
+    'Woman in Distress': 'aid',
+    'Merchant': 'trading',
+    'Guard': 'guarding',
+    'Innkeeper': 'innkeeping',
+    'Beggar': 'begging',
+    'Noble': 'nobility',
+    'Mystic': 'divination',
+  };
   const npcSkillsDetails = {
     innkeeping: {
       id: 'innkeeping',
@@ -487,9 +488,9 @@ const AgentMakerPage: React.FC = () => {
   };
 
   const dndGenders = [
-      'male',
-      'female',
-      'other',
+    'male',
+    'female',
+    'other',
   ];
 
   const personalities = [
@@ -512,30 +513,31 @@ const AgentMakerPage: React.FC = () => {
     'musical',
   ];
 
-    const npcIcons = {
-        'Bartender': '🍺',
-        'Blacksmith': '🔨',
-        'Old Man': '👴',
-        'Woman in Distress': '🥺',
-        'Merchant': '💰',
-        'Guard': '🛡️',
-        'Innkeeper': '🏨',
-        'Beggar': '🕳️',
-        'Noble': '👑',
-        'Mystic': '🔮'
-    };
+  const npcIcons = {
+    'Bartender': '🍺',
+    'Blacksmith': '🔨',
+    'Old Man': '👴',
+    'Woman in Distress': '🥺',
+    'Merchant': '💰',
+    'Guard': '🛡️',
+    'Innkeeper': '🏨',
+    'Beggar': '🕳️',
+    'Noble': '👑',
+    'Mystic': '🔮'
+  };
 
   React.useEffect(() => {
     if (agentType === 'service') {
       setAgentIcon('🤖');
       setAgentDescription('Calculation, Memory, Scheduling');
-        setSelectedClass('service');
+      setSelectedClass('service');
+
     } else if (agentType === 'NPC') {
-        const npcIcon = npcIcons[agentName] || '👤';
-        setAgentIcon(npcIcon);
-        setAgentDescription(`Generic ${agentName} NPC Description`);
-        const npcSkill = npcSkills[agentName] || 'default';
-        setSelectedClass(npcSkill);
+      const npcIcon = npcIcons[agentName] || '👤';
+      setAgentIcon(npcIcon);
+      setAgentDescription(`Generic ${agentName} NPC Description`);
+      const npcSkill = npcSkills[agentName] || 'default';
+      setSelectedClass(npcSkill);
 
     }
     else {
@@ -598,14 +600,20 @@ const AgentMakerPage: React.FC = () => {
                 if (value === 'service') {
                   setAgentIcon('🤖');
                   setAgentDescription('Calculation, Memory, Scheduling');
-                    setSelectedClass('service');
+                  setSelectedClass('service');
 
                 } else if (value === 'NPC') {
                   const npcIcon = npcIcons[agentName] || '👤';
                   setAgentIcon(npcIcon);
                   setAgentDescription(`Generic ${agentName} NPC Description`);
-                    setSelectedClass(value.toLowerCase());
+                  const npcSkill = npcSkills[agentName] || 'default';
+                  setSelectedClass(npcSkill);
 
+                } else {
+                  const selectedClassDetails = dndClasses.find((c) => c.name.toLowerCase() === selectedClass);
+                  if (selectedClassDetails) {
+                    setAgentIcon(selectedClassDetails.icon);
+                  }
                 }
               }} value={agentType}>
                 <SelectTrigger id="agent-type">
@@ -630,23 +638,23 @@ const AgentMakerPage: React.FC = () => {
                 placeholder="Enter agent URL"
               />
             </div>
-              {(agentType === 'character' || agentType === 'NPC') && (
-                  <div>
-                      <Label htmlFor="agent-gender">Agent Gender</Label>
-                      <Select onValueChange={(value) => setSelectedGender(value)} value={selectedGender}>
-                          <SelectTrigger id="agent-gender">
-                              <SelectValue placeholder="Select agent gender"/>
-                          </SelectTrigger>
-                          <SelectContent>
-                              {dndGenders.map((gender) => (
-                                  <SelectItem key={gender} value={gender}>
-                                      {gender}
-                                  </SelectItem>
-                              ))}
-                          </SelectContent>
-                      </Select>
-                  </div>
-              )}
+            {(agentType === 'character' || agentType === 'NPC') && (
+              <div>
+                <Label htmlFor="agent-gender">Agent Gender</Label>
+                <Select onValueChange={(value) => setSelectedGender(value)} value={selectedGender}>
+                  <SelectTrigger id="agent-gender">
+                    <SelectValue placeholder="Select agent gender"/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dndGenders.map((gender) => (
+                      <SelectItem key={gender} value={gender}>
+                        {gender}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             {(agentType === 'character') && (
               <div>
@@ -676,11 +684,11 @@ const AgentMakerPage: React.FC = () => {
                 <Label htmlFor="agent-icon">Agent NPC</Label>
                 <Select onValueChange={(value) => {
                   setAgentName(value);
-                    setAgentDescription(`Generic ${value} NPC Description`);
-                    const npcIcon = npcIcons[value] || '👤';
-                    setAgentIcon(npcIcon);
-                    const npcSkill = npcSkills[value] || 'default';
-                    setSelectedClass(npcSkill);
+                  setAgentDescription(`Generic ${value} NPC Description`);
+                  const npcIcon = npcIcons[value] || '👤';
+                  setAgentIcon(npcIcon);
+                  const npcSkill = npcSkills[value] || 'default';
+                  setSelectedClass(npcSkill);
                 }} value={agentName}>
                   <SelectTrigger id="agent-npc">
                     <SelectValue placeholder="Select agent NPC"/>
@@ -714,97 +722,97 @@ const AgentMakerPage: React.FC = () => {
                 </Select>
               </div>
             )}
-              {(agentType === 'character') && (
-                  <div>
-                      <Label htmlFor="agent-alignment">Agent Alignment</Label>
-                      <Select onValueChange={(value) => setSelectedAlignment(value)} value={selectedAlignment}>
-                          <SelectTrigger id="agent-alignment">
-                              <SelectValue placeholder="Select agent alignment"/>
-                          </SelectTrigger>
-                          <SelectContent>
-                              {dndAlignments.map((alignment) => (
-                                  <SelectItem key={alignment} value={alignment}>
-                                      {alignment}
-                                  </SelectItem>
-                              ))}
-                          </SelectContent>
-                      </Select>
-                  </div>
-              )}
+            {(agentType === 'character') && (
+              <div>
+                <Label htmlFor="agent-alignment">Agent Alignment</Label>
+                <Select onValueChange={(value) => setSelectedAlignment(value)} value={selectedAlignment}>
+                  <SelectTrigger id="agent-alignment">
+                    <SelectValue placeholder="Select agent alignment"/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dndAlignments.map((alignment) => (
+                      <SelectItem key={alignment} value={alignment}>
+                        {alignment}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
-                <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
-                <Input
-                    type="color"
-                    id="agent-theme-color"
-                    value={agentThemeColor}
-                    onChange={(e) => setAgentThemeColor(e.target.value)}
-                />
+              <Label htmlFor="agent-theme-color">Agent Theme Color</Label>
+              <Input
+                type="color"
+                id="agent-theme-color"
+                value={agentThemeColor}
+                onChange={(e) => setAgentThemeColor(e.target.value)}
+              />
             </div>
           </div>
-            {(agentType === 'character' || agentType === 'NPC') && (
-                <div className="grid grid-cols-3 gap-4">
-                    <div>
-                        <Label htmlFor="strength">Strength</Label>
-                        <Input
-                            type="number"
-                            id="strength"
-                            value={String(strength)}
-                            onChange={(e) => setStrength(Number(e.target.value))}
-                            placeholder="Strength"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="dexterity">Dexterity</Label>
-                        <Input
-                            type="number"
-                            id="dexterity"
-                            value={String(dexterity)}
-                            onChange={(e) => setDexterity(Number(e.target.value))}
-                            placeholder="Dexterity"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="constitution">Constitution</Label>
-                        <Input
-                            type="number"
-                            id="constitution"
-                            value={String(constitution)}
-                            onChange={(e) => setConstitution(Number(e.target.value))}
-                            placeholder="Constitution"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="intelligence">Intelligence</Label>
-                        <Input
-                            type="number"
-                            id="intelligence"
-                            value={String(intelligence)}
-                            onChange={(e) => setIntelligence(Number(e.target.value))}
-                            placeholder="Intelligence"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="wisdom">Wisdom</Label>
-                        <Input
-                            type="number"
-                            id="wisdom"
-                            value={String(wisdom)}
-                            onChange={(e) => setWisdom(Number(e.target.value))}
-                            placeholder="Wisdom"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="charisma">Charisma</Label>
-                        <Input
-                            type="number"
-                            id="charisma"
-                            value={String(charisma)}
-                            onChange={(e) => setCharisma(Number(e.target.value))}
-                            placeholder="Charisma"
-                        />
-                    </div>
-                </div>
-            )}
+          {(agentType === 'character' || agentType === 'NPC') && (
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="strength">Strength</Label>
+                <Input
+                  type="number"
+                  id="strength"
+                  value={String(strength)}
+                  onChange={(e) => setStrength(Number(e.target.value))}
+                  placeholder="Strength"
+                />
+              </div>
+              <div>
+                <Label htmlFor="dexterity">Dexterity</Label>
+                <Input
+                  type="number"
+                  id="dexterity"
+                  value={String(dexterity)}
+                  onChange={(e) => setDexterity(Number(e.target.value))}
+                  placeholder="Dexterity"
+                />
+              </div>
+              <div>
+                <Label htmlFor="constitution">Constitution</Label>
+                <Input
+                  type="number"
+                  id="constitution"
+                  value={String(constitution)}
+                  onChange={(e) => setConstitution(Number(e.target.value))}
+                  placeholder="Constitution"
+                />
+              </div>
+              <div>
+                <Label htmlFor="intelligence">Intelligence</Label>
+                <Input
+                  type="number"
+                  id="intelligence"
+                  value={String(intelligence)}
+                  onChange={(e) => setIntelligence(Number(e.target.value))}
+                  placeholder="Intelligence"
+                />
+              </div>
+              <div>
+                <Label htmlFor="wisdom">Wisdom</Label>
+                <Input
+                  type="number"
+                  id="wisdom"
+                  value={String(wisdom)}
+                  onChange={(e) => setWisdom(Number(e.target.value))}
+                  placeholder="Wisdom"
+                />
+              </div>
+              <div>
+                <Label htmlFor="charisma">Charisma</Label>
+                <Input
+                  type="number"
+                  id="charisma"
+                  value={String(charisma)}
+                  onChange={(e) => setCharisma(Number(e.target.value))}
+                  placeholder="Charisma"
+                />
+              </div>
+            </div>
+          )}
           <div>
             <Label htmlFor="agent-description">Agent Description</Label>
             <Textarea
@@ -814,45 +822,45 @@ const AgentMakerPage: React.FC = () => {
               placeholder="Describe the agent"
             />
           </div>
-            <div>
-                <Label htmlFor="initial-action">Initial Action</Label>
-                <Textarea
-                    id="initial-action"
-                    value={initialAction}
-                    onChange={(e) => setInitialAction(e.target.value)}
-                    placeholder="Describe the initial action"
-                />
-            </div>
-            <div>
-              <Label htmlFor="agent-personality">Agent Personality</Label>
-              <Select onValueChange={(value) => setSelectedPersonality(value)} value={selectedPersonality}>
-                <SelectTrigger id="agent-personality">
-                  <SelectValue placeholder="Select agent personality"/>
-                </SelectTrigger>
-                <SelectContent>
-                  {personalities.map((personality) => (
-                    <SelectItem key={personality} value={personality}>
-                      {personality}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="agent-speech-style">Agent Speech Style</Label>
-              <Select onValueChange={(value) => setSelectedSpeechStyle(value)} value={selectedSpeechStyle}>
-                <SelectTrigger id="agent-speech-style">
-                  <SelectValue placeholder="Select agent speech style"/>
-                </SelectTrigger>
-                <SelectContent>
-                  {speechStyles.map((style) => (
-                    <SelectItem key={style} value={style}>
-                      {style}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div>
+            <Label htmlFor="initial-action">Initial Action</Label>
+            <Textarea
+              id="initial-action"
+              value={initialAction}
+              onChange={(e) => setInitialAction(e.target.value)}
+              placeholder="Describe the initial action"
+            />
+          </div>
+          <div>
+            <Label htmlFor="agent-personality">Agent Personality</Label>
+            <Select onValueChange={(value) => setSelectedPersonality(value)} value={selectedPersonality}>
+              <SelectTrigger id="agent-personality">
+                <SelectValue placeholder="Select agent personality"/>
+              </SelectTrigger>
+              <SelectContent>
+                {personalities.map((personality) => (
+                  <SelectItem key={personality} value={personality}>
+                    {personality}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="agent-speech-style">Agent Speech Style</Label>
+            <Select onValueChange={(value) => setSelectedSpeechStyle(value)} value={selectedSpeechStyle}>
+              <SelectTrigger id="agent-speech-style">
+                <SelectValue placeholder="Select agent speech style"/>
+              </SelectTrigger>
+              <SelectContent>
+                {speechStyles.map((style) => (
+                  <SelectItem key={style} value={style}>
+                    {style}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <div>
             <Label>Select MCPs</Label>
@@ -860,40 +868,48 @@ const AgentMakerPage: React.FC = () => {
               {availableMcps.map((mcp) => (
                 <div key={mcp} className="flex items-center space-x-2">
                   <Input type="checkbox" id={mcp} checked={selectedMcps.includes(mcp)}
-                            onChange={() => handleMcpSelection(mcp)}/>
+                         onChange={() => handleMcpSelection(mcp)}/>
                   <Label htmlFor={mcp}>{mcp}</Label>
                 </div>
               ))}
             </div>
           </div>
           <div className="flex justify-end space-x-2">
-              <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                      <Button>
-                          Generate Agent
-                      </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                      <AlertDialogHeader>
-                          <AlertDialogTitle>Agent Card Preview</AlertDialogTitle>
-                          <AlertDialogDescription>
-                              {agentCardJson ? (
-                                  <pre className="mt-4 p-4 bg-gray-100 rounded-md overflow-auto">
-                                      {agentCardJson}
-                                  </pre>
-                              ) : (
-                                  "No Agent Card JSON generated yet."
-                              )}
-                          </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogAction onClick={handleSubmit}>Okay</AlertDialogAction>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  </AlertDialogContent>
-              </AlertDialog>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button onClick={handleSubmit}>
+                  Generate Agent
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Agent Card Preview</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {agentCardJson ? (
+                      <pre className="mt-4 p-4 bg-gray-100 rounded-md overflow-auto">
+                        {agentCardJson}
+                      </pre>
+                    ) : (
+                      "No Agent Card JSON generated yet."
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogAction onClick={handleSubmit}>Okay</AlertDialogAction>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+              </AlertDialogContent>
+            </AlertDialog>
             <Button variant="outline" onClick={() => {
-                const agentCard = generateAgentCard();
-                const agentCardJsonString = JSON.stringify(agentCard, null, 2);
-                setAgentCardJson(agentCardJsonString);
+              let skillDetails;
+              if (agentType === 'NPC') {
+                skillDetails = npcSkillsDetails[selectedClass];
+              } else {
+                skillDetails = getSkillDetails();
+              }
+              const agentCard = generateAgentCard(skillDetails);
+              const agentCardJsonString = JSON.stringify(agentCard, null, 2);
+              setAgentCardJson(agentCardJsonString);
+              router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJsonString)}`);
+
             }}>
               View AgentCard
             </Button>
