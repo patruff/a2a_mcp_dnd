@@ -28,7 +28,7 @@ To get started, take a look at src/app/page.tsx.
 - **Agent Maker:**
   - `src/app/agent-maker/page.tsx`: This file contains the agent maker form, which is used to create and configure AI agents using natural language descriptions.
   - **Code Context**:
-    - **Dependencies**:
+    - Dependencies:
       - React: Used for building the UI components.
       - `react-hook-form`: Manages form state and validation.
       - `@hookform/resolvers`: Integrates Zod for schema-based validation.
@@ -75,7 +75,9 @@ To get started, take a look at src/app/page.tsx.
       - React: Used for building the UI components.
       - `@/components/ui/*`: Shadcn UI components for consistent styling.
       - `lucide-react`: For icons.
-    - The agent list page fetches agent data from a data source (currently placeholder data) and renders it in a list using React components. It includes styling for the list items and a message for when no agents have been created yet.
+      - next/link
+
+    - The agent list page fetches agent data from local storage and renders it in a three-column grid using React components. It includes styling for the list items and links to the AgentCard JSON in the Agent Viewer.
 
 - **MCP List:**
   - `src/app/mcp-list/page.tsx`: This file shows available Model Context Protocol (MCP) components and their tools.
@@ -100,5 +102,6 @@ To get started, take a look at src/app/page.tsx.
   - `src/app/tavern/page.tsx`: This file displays the Smoky Tavern map.
   - `src/app/TavernMap.css`: This file styles the tavern map.
   - **Code Context**: The Tavern page uses React to create a visual representation of a tavern map. It includes features such as furniture, characters, and lighting effects. Characters can be moved around the map using directional controls.
+
 
 

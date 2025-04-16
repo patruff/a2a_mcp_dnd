@@ -1,24 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import Link from 'next/link';
 
 interface Agent {
   name: string;
   type: string;
   class?: string;
   npc?: string;
+  agentCardJson?: string;
 }
 
 const AgentListPage: React.FC = () => {
-  // Placeholder data - replace with actual data fetching later
-  const agents: Agent[] = [
-    {name: 'Wizard Agent', type: 'character', class: 'Wizard'},
-    {name: 'Fighter Agent', type: 'character', class: 'Fighter'},
-    {name: 'Bartender NPC', type: 'NPC', npc: 'Bartender'},
-    {name: 'Service Agent', type: 'service'},
-    // Add more agents here
-  ];
+  const [agents, setAgents] = useState<Agent[]>([]);
+
+  useEffect(() => {
+    // Fetch agent data from local storage
+    const storedAgents = localStorage.getItem('agents');
+    if (storedAgents) {
+      setAgents(JSON.parse(storedAgents));
+    }
+  }, []);
 
   return (
     <div className="container mx-auto py-10">
@@ -31,18 +34,23 @@ const AgentListPage: React.FC = () => {
         </CardHeader>
         <CardContent>
           {agents.length > 0 ? (
-            <ul className="list-none pl-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {agents.map((agent, index) => (
-                <li key={index} className="py-2 border-b border-gray-200 last:border-b-0">
+                <div key={index} className="py-2 border-b border-gray-200 last:border-b-0">
                   <strong className="text-lg">{agent.name}</strong>
                   <p className="text-sm text-gray-500">
                     Type: {agent.type}
                     {agent.type === 'character' && agent.class && `, Class: ${agent.class}`}
                     {agent.type === 'NPC' && agent.npc && `, NPC: ${agent.npc}`}
                   </p>
-                </li>
+                  {agent.agentCardJson && (
+                    <Link href={`/agent-viewer?agentCardJson=${encodeURIComponent(agent.agentCardJson)}`}>
+                      View AgentCard
+                    </Link>
+                  )}
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>No agents have been created yet.</p>
           )}

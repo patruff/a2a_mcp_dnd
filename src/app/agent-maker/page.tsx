@@ -27,7 +27,7 @@ const AgentMakerPage: React.FC = () => {
   const [selectedClass, setSelectedClass] = React.useState<string>('wizard');
   const [selectedRace, setSelectedRace] = React.useState<string>('human');
   const [selectedAlignment, setSelectedAlignment] = React.useState<string>('neutral good');
-  const [selectedGender, setSelectedGender] = React.useState<string>('male');
+  const [selectedGender, setSelectedGender] = useState<string>('male');
   const [initialAction, setInitialAction] = useState<string>('');
   const [selectedPersonality, setSelectedPersonality] = useState<string>('stoic');
   const [selectedSpeechStyle, setSelectedSpeechStyle] = useState<string>('formal');
@@ -36,8 +36,6 @@ const AgentMakerPage: React.FC = () => {
   const router = useRouter();
 
   const [agentCardJson, setAgentCardJson] = useState<string>('');
-
-  const [agentList, setAgentList] = useState<any[]>([]);
 
   const availableMcps = [
     '@modelcontextprotocol/server-filesystem',
@@ -218,6 +216,18 @@ const AgentMakerPage: React.FC = () => {
     setSelectedMcps((prev) => (prev.includes(mcp) ? prev.filter((item) => item !== mcp) : [...prev, mcp]));
   };
 
+  const saveAgentToLocalStorage = (agent: any) => {
+    // Get existing agents from local storage
+    const storedAgents = localStorage.getItem('agents');
+    let agentsArray = storedAgents ? JSON.parse(storedAgents) : [];
+
+    // Add the new agent to the array
+    agentsArray = [...agentsArray, agent];
+
+    // Save the updated array back to local storage
+    localStorage.setItem('agents', JSON.stringify(agentsArray));
+  };
+
   const handleSubmit = async () => {
     let skillDetails;
     if (agentType === 'NPC') {
@@ -229,15 +239,14 @@ const AgentMakerPage: React.FC = () => {
     const agentCardJsonString = JSON.stringify(agentCard, null, 2);
     setAgentCardJson(agentCardJsonString);
 
-    // Add the agent to the agent list
-    setAgentList((prevList) => [
-      ...prevList,
-      {
-        name: agentName,
-        type: agentType,
-        class: selectedClass,
-      },
-    ]);
+    const newAgent = {
+      name: agentName,
+      type: agentType,
+      class: selectedClass,
+      agentCardJson: agentCardJsonString
+    };
+
+    saveAgentToLocalStorage(newAgent);
 
     toast({
       title: 'Agent Generated',
@@ -945,6 +954,7 @@ const AgentMakerPage: React.FC = () => {
               const agentCard = generateAgentCard(skillDetails);
               const agentCardJsonString = JSON.stringify(agentCard, null, 2);
               setAgentCardJson(agentCardJsonString);
+              handleSubmit();
               router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJsonString)}`);
 
             }}>
