@@ -10,6 +10,8 @@ import {Button} from '@/components/ui/button';
 import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
+import {Copy} from 'lucide-react';
+import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger} from '@/components/ui/alert-dialog';
 
 const AgentMakerPage: React.FC = () => {
   const [agentName, setAgentName] = React.useState('DefaultAgentName');
@@ -26,7 +28,7 @@ const AgentMakerPage: React.FC = () => {
   const [selectedRace, setSelectedRace] = React.useState<string>('human');
   const [selectedAlignment, setSelectedAlignment] = React.useState<string>('neutral good');
   const [selectedGender, setSelectedGender] = React.useState<string>('male');
-    const [strength, setStrength] = useState<number>(10);
+  const [strength, setStrength] = useState<number>(10);
   const [dexterity, setDexterity] = useState<number>(10);
   const [constitution, setConstitution] = useState<number>(10);
   const [intelligence, setIntelligence] = useState<number>(10);
@@ -38,6 +40,10 @@ const AgentMakerPage: React.FC = () => {
 
   const {toast} = useToast();
   const router = useRouter();
+
+    const [agentCardJson, setAgentCardJson] = useState<string>('');
+
+    const [agentList, setAgentList] = useState<any[]>([]);
 
   const availableMcps = [
     '@modelcontextprotocol/server-filesystem',
@@ -52,7 +58,7 @@ const AgentMakerPage: React.FC = () => {
     '@patruff/server-codesnip',
   ];
 
-  const handleViewAgentCard = () => {
+  const generateAgentCard = () => {
     const agentCard = {
       name: agentName,
       description: agentDescription,
@@ -189,32 +195,29 @@ const AgentMakerPage: React.FC = () => {
           };
         }),
       },
-      character: {
-        name: agentName,
-        race: selectedRace,
-        class: selectedClass,
-        level: 1,
-        personality: selectedPersonality,
-        speech_style: selectedSpeechStyle,
-        description: agentDescription,
-        port: 41249,
-        initial_action: initialAction,
-        skills: [],
-        stats: {
-          strength: strength,
-          dexterity: dexterity,
-          constitution: constitution,
-          intelligence: intelligence,
-          wisdom: wisdom,
-          charisma: charisma
+        character: {
+            name: agentName,
+            race: selectedRace,
+            class: selectedClass,
+            level: 1,
+            personality: selectedPersonality,
+            speech_style: selectedSpeechStyle,
+            description: agentDescription,
+            port: 41249,
+            initial_action: initialAction,
+            skills: [],
+            stats: {
+                strength: strength,
+                dexterity: dexterity,
+                constitution: constitution,
+                intelligence: intelligence,
+                wisdom: wisdom,
+                charisma: charisma
+            },
+            skills_list: [],
         },
-          skills_list: [],
-      }
     };
-
-    const agentCardJsonString = JSON.stringify(agentCard, null, 2);
-    router.push(`/agent-viewer?agentCardJson=${encodeURIComponent(agentCardJsonString)}`);
-
+    return agentCard;
   };
 
   const handleMcpSelection = (mcp: string) => {
@@ -222,26 +225,31 @@ const AgentMakerPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    setIsGenerating(true);
-    try {
-      router.push(`/agent-viewer`);
-    } catch (error: any) {
-      console.error('Error generating agent:', error);
-      toast({
-        title: 'Error',
-        description: `Failed to generate agent: ${error.message}`,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+      const agentCard = generateAgentCard();
+      const agentCardJsonString = JSON.stringify(agentCard, null, 2);
+      setAgentCardJson(agentCardJsonString);
 
-  const providerModels: {[key: string]: string[]} = {
-    Google: ['gemini-2-flash'],
-    Cerebras: ['llama-4-scout-17b-16e-instruct'],
-    Groq: ['qwen-qwq-32b'],
-  };
+        // Add the agent to the agent list
+        setAgentList((prevList) => [
+            ...prevList,
+            {
+                name: agentName,
+                type: agentType,
+                class: selectedClass,
+            },
+        ]);
+
+        toast({
+            title: 'Agent Generated',
+            description: `Added agent ${agentName} to the list of agents. See the agent list page for more.`,
+        });
+    };
+
+    const providerModels: {[key: string]: string[]} = {
+        Google: ['gemini-2-flash'],
+        Cerebras: ['llama-4-scout-17b-16e-instruct'],
+        Groq: ['qwen-qwq-32b'],
+    };
 
   const dndClasses = [
     {name: 'Wizard', icon: '🧙‍♂️'},
@@ -873,10 +881,34 @@ const AgentMakerPage: React.FC = () => {
           </div>
 
           <div className="flex justify-end space-x-2">
-            <Button onClick={handleSubmit} disabled={isGenerating}>
-              {isGenerating ? 'Generate...' : 'Generate Agent'}
-            </Button>
-            <Button variant="outline" onClick={handleViewAgentCard} disabled={isGenerating}>
+              <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                      <Button>
+                          Generate Agent
+                      </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Agent Card Preview</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              {agentCardJson ? (
+                                  <pre className="mt-4 p-4 bg-gray-100 rounded-md overflow-auto">
+                                      {agentCardJson}
+                                  </pre>
+                              ) : (
+                                  "No Agent Card JSON generated yet."
+                              )}
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogAction onClick={handleSubmit}>Okay</AlertDialogAction>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  </AlertDialogContent>
+              </AlertDialog>
+            <Button variant="outline" onClick={() => {
+                const agentCard = generateAgentCard();
+                const agentCardJsonString = JSON.stringify(agentCard, null, 2);
+                setAgentCardJson(agentCardJsonString);
+            }}>
               View AgentCard
             </Button>
           </div>
